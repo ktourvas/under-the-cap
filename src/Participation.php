@@ -12,4 +12,10 @@ class Participation extends Model {
         parent::__construct($attributes);
     }
 
+    /**
+     * The RedemptionCode associated with the Participation
+     */
+    public function redemptionCode() {
+        return $this->belongsTo('UnderTheCap\RedemptionCode', 'code_id');
+    }
 }

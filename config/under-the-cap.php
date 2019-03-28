@@ -33,4 +33,16 @@ return [
         'optin'
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | RedemptionCode table name
+    |--------------------------------------------------------------------------
+    |
+    | This option allows you to specify the RedemptionCode model database
+    | $table.
+    |
+    */
+
+    'redemption_code_table' => 'redemption_codes',
+
 ];
