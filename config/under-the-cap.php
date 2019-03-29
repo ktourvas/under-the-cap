@@ -45,4 +45,16 @@ return [
 
     'redemption_code_table' => 'redemption_codes',
 
+    /*
+    |--------------------------------------------------------------------------
+    | The types that a win can be of
+    |--------------------------------------------------------------------------
+    |
+    | This option allows you to specify a list of types that a win can be.
+    |
+    */
+    'win_types' => [
+        ''
+    ]
+
 ];
