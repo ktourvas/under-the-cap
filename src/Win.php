@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Win extends Model {
 
     protected $types;
+    protected $fillable = [ 'type_id' ];
 
     public function __construct(array $attributes = [])
     {
