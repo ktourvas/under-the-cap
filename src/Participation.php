@@ -18,4 +18,11 @@ class Participation extends Model {
     public function redemptionCode() {
         return $this->belongsTo('UnderTheCap\RedemptionCode', 'code_id');
     }
+
+    /**
+     * The Wins associated with the Participation.
+     */
+    public function win() {
+        return $this->hasMany('UnderTheCap\Win');
+    }
 }
