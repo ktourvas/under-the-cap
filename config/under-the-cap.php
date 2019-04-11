@@ -13,6 +13,9 @@ return [
     | a class is called is the one with the key "current". This means that
     | depending on your setup your application is responsible for setting the
     | current key to the correct one for proper functionality.
+    |
+    | ex. config([ 'under-the-cap.current' => config('under-the-cap.mypreference') ]);
+    |
     | When the package provided routes are used, make sure to include a variable
     | with the name utc_env in order for the correct config to be used.
     | In case your application manages one promo environment use the existing
