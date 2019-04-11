@@ -7,7 +7,7 @@ class RedemptionCode extends Model {
 
     public function __construct(array $attributes = [])
     {
-        $this->table = config('under-the-cap.redemption_code_table');
+        $this->table = config('under-the-cap.current.redemption_code_table');
         parent::__construct($attributes);
     }
 

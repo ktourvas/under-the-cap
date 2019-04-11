@@ -10,7 +10,7 @@ class Win extends Model {
 
     public function __construct(array $attributes = [])
     {
-        $this->types = config('under-the-cap.win_types');
+        $this->types = config('under-the-cap.current.win_types');
         parent::__construct($attributes);
     }
 

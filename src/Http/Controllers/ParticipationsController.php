@@ -15,9 +15,9 @@ class ParticipationsController extends Controller {
      */
     public function submit(Request $request)
     {
-        $this->validate($request, config('under-the-cap.participation_fields_rules') );
+        $this->validate($request, config('under-the-cap.current.participation_fields_rules') );
         $data = [];
-        foreach ( config('under-the-cap.participation_fields') as $field) {
+        foreach ( config('under-the-cap.current.participation_fields') as $field) {
             $data[$field] = $request->get($field);
         }
         $participation = Participation::create($data);
