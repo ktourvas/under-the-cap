@@ -15,6 +15,12 @@ class ParticipationsController extends Controller {
      */
     public function submit(Request $request)
     {
+        if(!empty($request->utc_env)) {
+            if( !empty( config('under-the-cap.'.$request->utc_env) ) ) {
+                config([ 'under-the-cap.current' => config('under-the-cap.'.$request->utc_env) ]);
+            }
+        }
+
         $this->validate($request, config('under-the-cap.current.participation_fields_rules') );
         $data = [];
         foreach ( config('under-the-cap.current.participation_fields') as $field) {
