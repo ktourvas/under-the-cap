@@ -21,6 +21,19 @@ class ParticipationsController extends Controller {
             }
         }
 
+        if(
+            !empty( config('under-the-cap.current.start_date') ) &&
+            !empty( config('under-the-cap.current.end_date') )
+        ) {
+            if(
+                time() < !empty( config('under-the-cap.current.start_date') )
+                ||
+                time() > !empty( config('under-the-cap.current.end_date') )
+            ) {
+                return response()->json([ 'error' => '' ], 503);
+            }
+        }
+
         $this->validate($request, config('under-the-cap.current.participation_fields_rules') );
         $data = [];
         foreach ( config('under-the-cap.current.participation_fields') as $field) {
