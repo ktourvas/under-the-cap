@@ -26,9 +26,9 @@ class ParticipationsController extends Controller {
             !empty( config('under-the-cap.current.end_date') )
         ) {
             if(
-                time() < !empty( config('under-the-cap.current.start_date') )
+                time() < config('under-the-cap.current.start_date')
                 ||
-                time() > !empty( config('under-the-cap.current.end_date') )
+                time() > config('under-the-cap.current.end_date')
             ) {
                 return response()->json([ 'error' => '' ], 503);
             }
