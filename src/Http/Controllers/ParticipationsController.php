@@ -30,7 +30,7 @@ class ParticipationsController extends Controller {
                 ||
                 time() > config('under-the-cap.current.end_date')
             ) {
-                return response()->json([ 'error' => '' ], 503);
+                return response('', 503);
             }
         }
 
