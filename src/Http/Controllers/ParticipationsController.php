@@ -34,7 +34,10 @@ class ParticipationsController extends Controller {
             }
         }
 
-        $this->validate($request, config('under-the-cap.current.participation_fields_rules') );
+        $this->validate($request,
+            config('under-the-cap.current.participation_fields_rules'),
+            config('under-the-cap.current.participation_fields_rule_messages')
+        );
         $data = [];
         foreach ( config('under-the-cap.current.participation_fields') as $field) {
             $data[$field] = $request->get($field);

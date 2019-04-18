@@ -100,6 +100,19 @@ return [
 
         /*
         |--------------------------------------------------------------------------
+        | Participation fields validation rules
+        |--------------------------------------------------------------------------
+        |
+        | This option allows you to specify the rules for the participation model
+        | fields validation. The array will be populated for use at the submit
+        | controller method.
+        |
+        */
+
+        'participation_fields_rule_messages' => [],
+
+        /*
+        |--------------------------------------------------------------------------
         | RedemptionCode table name
         |--------------------------------------------------------------------------
         |
