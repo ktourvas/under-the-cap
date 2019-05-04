@@ -25,6 +25,8 @@ return [
 
     'current' => [
 
+        'name' => 'Identifier Name',
+
         /*
         |--------------------------------------------------------------------------
         | Accepting Participation Start Date
@@ -59,7 +61,7 @@ return [
         |
         */
 
-        'participation_table' => 'participations',
+        'participation_table' => 'utc_participations',
 
         /*
         |--------------------------------------------------------------------------
@@ -67,49 +69,57 @@ return [
         |--------------------------------------------------------------------------
         |
         | This option allows you to specify the fields that the participation model
-        | will use be able to write. The array will be populated at the $fillable
-        | protected variable of the Participation model.
+        | will use. Each field item may include the is_searchable & is_id booleans,
+        | a tile to be used for lists and table views, its validation rules and
+        | validation error messages. The keys of the main array must be the same as
+        | the equivalent database column names and are used in the fillable variable
+        | of the Participation Eloquent Model.
         |
         */
 
         'participation_fields' => [
-            'name',
-            'surname',
-            'email',
-            'tel',
-            'optin'
+            'name' => [
+                'title' => 'Όνομα',
+                'is_searchable' => true,
+                'rules' => 'required|max:200',
+                'messages' => [
+                    'name.required' => 'Το πεδίο Όνομα είναι υποχρεωτικό',
+                ],
+            ],
+            'surname' => [
+                'title' => 'Επώνυμο',
+                'is_searchable' => true,
+                'rules' => 'required|max:200',
+                'messages' => [
+                    'surname.required' => 'Το πεδίο Επώνυμο είναι υποχρεωτικό',
+                ],
+            ],
+            'email' => [
+                'title' => 'Email',
+                'is_searchable' => true,
+                'rules' => 'required|email',
+                'messages' => [
+                    'email.required' => 'Το πεδίο E-mail είναι υποχρεωτικό',
+                    'email.unique' => 'Υπάρχει ήδη συμμετοχή με την συγκεκριμένη e-mail διεύθυνση',
+                ],
+            ],
+            'tel' => [
+                'title' => 'Τηλέφωνο',
+                'is_searchable' => true,
+                'rules' => 'nullable|digits:10|starts_with:69',
+                'messages' => [
+                    'tel.digits' => 'Παρακαλούμε συμπλήρωσε ένα σωστό κινητό τηλέφωνο επικοινωνίας',
+                    'tel.starts_with' => 'Παρακαλούμε συμπλήρωσε ένα σωστό κινητό τηλέφωνο επικοινωνίας',
+                ],
+            ],
+
+            'optin' => [
+                'title' => 'Opt In',
+                'rules' => 'required|accepted',
+                'messages' => [],
+            ],
+
         ],
-
-        /*
-        |--------------------------------------------------------------------------
-        | Participation fields validation rules
-        |--------------------------------------------------------------------------
-        |
-        | This option allows you to specify the rules for the participation model
-        | fields validation. The array will be populated for use at the submit
-        | controller method.
-        |
-        */
-
-        'participation_fields_rules' => [
-            'name' => 'required|max:200',
-            'surname' => 'required|max:200',
-            'email' => 'required|email',
-            'optin' => 'required|accepted'
-        ],
-
-        /*
-        |--------------------------------------------------------------------------
-        | Participation fields validation rules
-        |--------------------------------------------------------------------------
-        |
-        | This option allows you to specify the rules for the participation model
-        | fields validation. The array will be populated for use at the submit
-        | controller method.
-        |
-        */
-
-        'participation_fields_rule_messages' => [],
 
         /*
         |--------------------------------------------------------------------------
@@ -123,16 +133,39 @@ return [
 
         'redemption_code_table' => 'redemption_codes',
 
+        'wins_table' => 'utc_wins',
+
         /*
         |--------------------------------------------------------------------------
         | The types that a win can be of
         |--------------------------------------------------------------------------
         |
-        | This option allows you to specify a list of types that a win can be.
+        | This option allows you to specify a list of types that a win can be of.
+        | Each entry included its
+        | 1. title => the type title / label
+        | 2. drawable => bool, flags the type as usable with draw requests
+        | 3. bumpable => bool, flags a type as being able to be flagged as upgraded.
+        |    Ex. when a runner up needs to take the place of a winner.
+        | 4. number => the number of total Participations to draw for the specific
+        | type.
         |
         */
         'win_types' => [
-            ''
+
+            1 => [
+                'title' => 'Winner',
+                'drawable' => true,
+                'bumpable' => false,
+                'number' => 1,
+            ],
+
+            2 => [
+                'title' => 'Runner Up',
+                'drawable' => true,
+                'bumpable' => true,
+                'number' => 3,
+            ],
+
         ]
     ]
 

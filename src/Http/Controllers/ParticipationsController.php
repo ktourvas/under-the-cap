@@ -4,44 +4,44 @@ namespace UnderTheCap\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use UnderTheCap\Exceptions\PromoStatusException;
 use UnderTheCap\Participation;
+use UnderTheCap\Promo;
 
 class ParticipationsController extends Controller {
 
-    /**
-     * Manage the contact form post submission.
-     *
-     * @return void
-     */
-    public function submit(Request $request)
+    protected $promo;
+
+    public function __construct(Request $request)
     {
         if(!empty($request->utc_env)) {
             if( !empty( config('under-the-cap.'.$request->utc_env) ) ) {
                 config([ 'under-the-cap.current' => config('under-the-cap.'.$request->utc_env) ]);
             }
         }
+        $this->promo = new Promo();
+    }
 
-        if(
-            !empty( config('under-the-cap.current.start_date') ) &&
-            !empty( config('under-the-cap.current.end_date') )
-        ) {
-            if(
-                time() < config('under-the-cap.current.start_date')
-                ||
-                time() > config('under-the-cap.current.end_date')
-            ) {
-                return response('', 503);
-            }
-        }
+    /**
+     * Manage the participation submission.
+     *
+     * @return json
+     * @throws PromoStatusException
+     */
+    public function submit(Request $request)
+    {
+        $this->promo->validatePromoStatus();
 
         $this->validate($request,
-            config('under-the-cap.current.participation_fields_rules'),
-            config('under-the-cap.current.participation_fields_rule_messages')
+            $this->promo->participationValidationRules()->toArray(),
+            $this->promo->participationValidationMessages()->toArray()
         );
+
         $data = [];
-        foreach ( config('under-the-cap.current.participation_fields') as $field) {
+        foreach ( $this->promo->participationFieldKeys() as $field) {
             $data[$field] = $request->get($field);
         }
+
         $participation = Participation::create($data);
         return [ 'success' => !empty($participation) ];
     }

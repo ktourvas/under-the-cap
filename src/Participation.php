@@ -5,10 +5,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Participation extends Model {
 
+    protected $attributted_fields;
+
     public function __construct(array $attributes = [])
     {
         $this->table = config('under-the-cap.current.participation_table');
-        $this->fillable = config('under-the-cap.current.participation_fields');
+
+        $this->fillable = array_keys(config('under-the-cap.current.participation_fields'));
+
+        $this->attributted_fields = collect(config('under-the-cap.current.participation_fields'))->map(function($field) {
+            return $field;
+        })->reject(function ($field) {
+            return empty($field['is_id']);
+        });
+
         parent::__construct($attributes);
     }
 
@@ -23,6 +33,23 @@ class Participation extends Model {
      * The Wins associated with the Participation.
      */
     public function win() {
-        return $this->hasMany('UnderTheCap\Win');
+        return $this->hasMany('UnderTheCap\Win', 'participation_id');
     }
+
+    public function getDynamicField($field) {
+
+        return !empty($this->attributted_fields[$field]) ?
+
+            !empty($this->attributted_fields[$field]['is_id']['titles'][$this->getAttribute($field)]) ?
+
+                $this->attributted_fields[$field]['is_id']['titles'][$this->getAttribute($field)] :
+
+                $this->getAttribute($field)
+
+            :
+
+            $this->getAttribute($field);
+
+    }
+
 }
