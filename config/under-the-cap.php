@@ -166,6 +166,34 @@ return [
                 'number' => 3,
             ],
 
+        ],
+
+        'draws' => [
+
+            'recursive' => [
+                1 => [
+                    'title' => 'Daily Winner',
+                    'repeat' => 'daily',
+                    'winners_num' => 1,
+                    'runnerups_num' => 2,
+                    'group' => 'date'
+                ]
+            ],
+
+            'adhoc' => [
+                2 => [
+                    'title' => 'final winner',
+                    'winners_num' => 3,
+                    'runnerups_num' => 2,
+                    'associate_participation_column' => [
+                        'column' => 'choice',
+                        'values' => [
+                            1, 2, 3
+                        ]
+                    ]
+                ]
+            ]
+
         ]
     ]
 

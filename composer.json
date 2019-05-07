@@ -2,7 +2,8 @@
   "name": "ktourvas/under-the-cap",
   "type": "laravel package",
   "require": {
-    "laravel/framework": "^5.7"
+    "laravel/framework": "^5.7",
+    "phpunit/phpunit": "^7.5"
   },
   "license": "MIT",
   "authors": [
@@ -22,5 +23,8 @@
         "UnderTheCap\\UnderTheCapServiceProvider"
       ]
     }
+  },
+  "require-dev": {
+    "orchestra/testbench": "^3.5"
   }
 }

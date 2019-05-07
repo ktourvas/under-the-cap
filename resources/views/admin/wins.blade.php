@@ -50,7 +50,7 @@
     </nav>
 
     @if($participations->count() > 0)
-        <table class="table is-fullwidth">
+        <table class="table is-fullwidth is-size-7">
             <thead>
             <tr>
 
@@ -63,6 +63,7 @@
 
                 <th>Ημ./Ώρα Δημιουργίας Συμμετοχής</th>
 
+                <th>Κλήρωση</th>
                 <th>Τύπος Νίκης</th>
                 <th>Ημερομηνία Νίκης</th>
 
@@ -72,7 +73,18 @@
 
             </tr>
             </thead>
-            @foreach($participations as $win)
+            @foreach($participations as $index => $win)
+
+                @if($index == 0 || $win->associated_date !== $participations[$index-1]->associated_date)
+
+                    <tr id="part{{ $win->id }}">
+                        <th colspan="16" class="is-success">
+                            Date: {{ $win->associated_date }}
+                        </th>
+                    </tr>
+
+                @endif
+
 
                 <tr id="part{{ $win->id }}">
 
@@ -97,6 +109,7 @@
 
                     <td>{{ $win->participation->created_at }}</td>
 
+                    <td>{{ $win->draw_name }}</td>
                     <td>{{ $win->type_name }}</td>
                     <td>{{ $win->associated_date }}</td>
 
@@ -105,7 +118,8 @@
                     <td>{{ $win->created_at }}</td>
 
                     <td>
-                    @if(!empty($wintypes[$win->type_id]['bumpable']) && !$win->bumped)
+
+                    @if($win->runnerup == 1 && $win->bumped == 0)
                         <f-put inline-template action="/api/utc/draws/{{ $promo }}/{{ $win->id }}/upgrade" confirmation="true">
                             <button class="button is-success" @click="onSubmit">
                                 <span>Upgrade</span>
@@ -114,7 +128,7 @@
                                 </span>
                             </button>
                         </f-put>
-                    @elseif(!empty($wintypes[$win->type_id]['bumpable']) && $win->bumped)
+                    @elseif($win->runnerup == 1 && $win->bumped == 1)
                         <f-delete inline-template action="/api/utc/draws/{{ $promo }}/{{ $win->id }}/upgrade" confirmation="true">
                             <button class="button is-warning" @click="onSubmit">
                                 <span>Downgrade</span>

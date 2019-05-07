@@ -3,6 +3,7 @@
 namespace UnderTheCap;
 
 use Illuminate\Database\Eloquent\Collection;
+use UnderTheCap\Exceptions\PromoConfigurationException;
 use UnderTheCap\Exceptions\PromoStatusException;
 
 class Promo {
@@ -14,7 +15,6 @@ class Promo {
         $this->info = config('under-the-cap.current');
         $this->participation_fields = collect(config('under-the-cap.current.participation_fields'));
     }
-
 
     /**
      * The status of the current promotion. Returns pending (p), running (r) or completed (e)
@@ -95,12 +95,61 @@ class Promo {
     }
 
     /**
+     * Validates the available draws configuration info against the minimum required item fields. In case of a missing
+     * directive an exception is thrown.
+     *
+     * @return null
+     * @throws PromoConfigurationException
+     */
+
+    public function validateDrawsConfig() {
+
+        foreach ($this->info['draws']['recursive'] as $draw) {
+            array_map(function($f) use ($draw) {
+                if(!in_array($f, array_keys($draw))) {
+                    throw new PromoConfigurationException('Recursive draws config is not valid');
+                }
+
+            }, [ 'title', 'repeat', 'winners_num', 'runnerups_num' ] );
+        }
+
+        foreach ($this->info['draws']['adhoc'] as $draw) {
+            array_map(function($f) use ($draw) {
+                if(!in_array($f, array_keys($draw))) {
+                    throw new PromoConfigurationException('Adhoc draws config is not valid');
+                }
+            }, [ 'title', 'winners_num', 'runnerups_num' ] );
+        }
+
+    }
+
+    /**
+     * The draws associated with the promo. A validation of the available conf is performed before returning
+     * the information array
+     *
+     * @return array
+     * @throws PromoConfigurationException
+     */
+    public function draws() {
+
+        $this->validateDrawsConfig();
+
+        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'] )
+            ->mapWithKeys(function ($type, $key ) {
+            return [ $key => $type['title'] ];
+        })->toArray();
+
+    }
+
+    /**
      * The types of wins associated with the promo
      *
      * @return array
      */
     public function winTypes() {
-        return $this->info['win_types'];
+        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'])->mapWithKeys(function ($type, $key ) {
+            return [ $key => $type['title'] ];
+        })->toArray();
     }
 
     /**
@@ -108,14 +157,18 @@ class Promo {
      *
      * @return array
      */
-    public function drawableWinTypes() {
+//    public function drawableWinTypes() {
+//
+//        return collect($this->info['win_types'])->map(function($type) {
+//            return $type;
+//        })->reject(function ($type) {
+//            return empty($type['drawable']);
+//        });
+//
+//    }
 
-        return collect($this->info['win_types'])->map(function($type) {
-            return $type;
-        })->reject(function ($type) {
-            return empty($type['drawable']);
-        });
-
+    public function info() {
+        return $this->info;
     }
 
 }

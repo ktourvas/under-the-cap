@@ -19,14 +19,11 @@ class LaravelAdminController extends Controller {
     }
 
     public function participations(Request $request, $promo) {
-
         $participations = Participation::orderBy('created_at', 'desc')->where(function($q) use ($request) {
-
             /**
              * if a search query is part of the request, get searchable fields and add relevant query clauses
              * TODO: make selection fields labels searchable
              */
-
             if(!empty($request->q)) {
                 foreach (array_keys($this->promo->ParticipationSearchables()->toArray()) as $field) {
                     $q->orWhere($field, 'LIKE', '%'.$request->q.'%');
@@ -34,11 +31,27 @@ class LaravelAdminController extends Controller {
             }
 
         })->paginate('50');
-
         return view('utc::admin.participations', [
             'promo' => $promo,
             'q' => $request->q,
             'participations' => $participations
+        ]);
+    }
+
+    public function draws(Request $request, $promo) {
+        return view('utc::admin.wins', [
+            'participations' =>
+
+                Win::
+//                orderBy('type_id', 'desc')
+                    with('participation')
+//                    ->orderByRaw('associated_date DESC, runnerup ASC')
+                    ->orderBy('associated_date', 'DESC')
+                    ->orderBy('runnerup', 'ASC')
+
+                    ->get(),
+            'promo' => $promo,
+            'wintypes' => $this->promo->winTypes(),
         ]);
     }
 
@@ -66,18 +79,6 @@ class LaravelAdminController extends Controller {
             fputcsv($out, $line);
         }
         fclose($out);
-    }
-
-    public function draws(Request $request, $promo) {
-        return view('utc::admin.wins', [
-            'participations' =>
-                Win::orderBy('type_id', 'desc')
-                    ->with('participation')
-                    ->get(),
-            'promo' => $promo,
-            'wintypes' => $this->promo->winTypes(),
-//                config('under-the-cap.current.win_types'),
-        ]);
     }
 
 }
