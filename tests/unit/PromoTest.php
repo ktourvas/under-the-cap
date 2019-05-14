@@ -22,7 +22,8 @@ class PromoTest extends Orchestra\Testbench\TestCase {
     }
 
 
-    public function testConfigInfo()
+    /** @test */
+    public function configInfo()
     {
 
         $this->assertIsArray($this->promo->participationFields());
@@ -37,6 +38,10 @@ class PromoTest extends Orchestra\Testbench\TestCase {
     public function testDrawsConfigNormal()
     {
         $this->assertIsArray($this->promo->draws());
+    }
+
+    public function testDrawReturnsArray() {
+        $this->assertIsArray($this->promo->draw(1));
     }
 
     public function testDrawsRecursiveConfigException()

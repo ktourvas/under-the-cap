@@ -27,6 +27,8 @@ return [
 
         'name' => 'Identifier Name',
 
+        'slug' => 'identifier-name',
+
         /*
         |--------------------------------------------------------------------------
         | Accepting Participation Start Date
@@ -131,42 +133,33 @@ return [
         |
         */
 
-        'redemption_code_table' => 'redemption_codes',
+        'redemption_code_table' => 'utc_redemption_codes',
 
         'wins_table' => 'utc_wins',
 
         /*
         |--------------------------------------------------------------------------
-        | The types that a win can be of
+        | The types of draws defined for the promo
         |--------------------------------------------------------------------------
         |
-        | This option allows you to specify a list of types that a win can be of.
+        | This option allows you to specify the different types of draws to be run.
+        | Two main categories of draws are used,
+        | 1. recursive => (for future use with laravel scheduler)
+        | 2. adhoc => appearing as options withing the laravel admin extension and can
+        | be requested to be performed.
+        |
         | Each entry included its
         | 1. title => the type title / label
-        | 2. drawable => bool, flags the type as usable with draw requests
-        | 3. bumpable => bool, flags a type as being able to be flagged as upgraded.
-        |    Ex. when a runner up needs to take the place of a winner.
-        | 4. number => the number of total Participations to draw for the specific
-        | type.
+        | 2. repeat => daily, hourly, etc. for future use with laravel scheduler
+        | 3. winners_num the number of winners to be drawn
+        | 4. runnerups_num the number of runner ups to be drawn
+        | 5. associate_participation_column specify whether the draw should be
+        | associated with a specific column's values.
+        | Ex. column of user specific choice (see below), will result in three
+        | winners, one for each value of the choice column, i.e. three draws each
+        | consisting of the sum of participants with the values specified.
         |
         */
-        'win_types' => [
-
-            1 => [
-                'title' => 'Winner',
-                'drawable' => true,
-                'bumpable' => false,
-                'number' => 1,
-            ],
-
-            2 => [
-                'title' => 'Runner Up',
-                'drawable' => true,
-                'bumpable' => true,
-                'number' => 3,
-            ],
-
-        ],
 
         'draws' => [
 

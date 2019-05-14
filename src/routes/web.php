@@ -1,10 +1,10 @@
 <?php
 
-Route::group([ 'middleware' => [ 'api', 'ipRestrict' ] ], function () {
+Route::group([ 'middleware' => [ 'api', ] ], function () {
 
     Route::post('/api/participations', 'UnderTheCap\Http\Controllers\ParticipationsController@submit');
 
-//    Route::group([ 'middleware' => [ 'LaravelAdmin' ] ], function () {
+    Route::post('/api/utc/code', 'UnderTheCap\Http\Controllers\RedemptionController@submitCode');
 
     Route::group([ 'middleware' => [
         'auth:api',
@@ -27,9 +27,16 @@ Route::group([ 'middleware' => [ 'api', 'ipRestrict' ] ], function () {
 
 });
 
-Route::group([ 'middleware' => [ 'web', 'LaravelAdmin' ] ], function () {
+Route::group([ 'middleware' =>
 
-//    Route::get('ladmin/utc/participations/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@participations');
+    array_merge(
+        [
+            'web', 'LaravelAdmin'
+        ],
+        ((config('laravel-admin.iprestrict')) ? [ 'ipRestrict' ] : [])
+    )
+
+], function () {
 
     Route::get(config('laravel-admin.root_url').'/utc/participations/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@participations');
 

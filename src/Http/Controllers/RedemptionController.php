@@ -10,7 +10,7 @@ use UnderTheCap\Participation;
 use UnderTheCap\Promo;
 use UnderTheCap\RedemptionCode;
 
-class ParticipationsController extends Controller {
+class RedemptionController extends Controller {
 
     protected $promo;
 
@@ -25,12 +25,13 @@ class ParticipationsController extends Controller {
     }
 
     /**
-     * Manage the participation submission.
+     * Manage the participation redemption code submission.
      *
      * @return array
      * @throws PromoStatusException
+     * @throws RedemptionCodeException
      */
-    public function submit(Request $request)
+    public function submitCode(Request $request)
     {
         $this->promo->validatePromoStatus();
 
@@ -39,15 +40,38 @@ class ParticipationsController extends Controller {
             $this->promo->participationValidationMessages()->toArray()
         );
 
+        $code = null;
+        if( !empty($request->code) ) {
+            $code = $this->getRedemptionCode($request->code);
+            if(empty($code)) {
+                throw new RedemptionCodeException($this->promo);
+            }
+        }
+
+        $fields = collect($this->promo->participationFieldKeys())->reject(function ($field) {
+            return $field === 'code';
+        })
+            ->map(function ($field) {
+                return $field;
+            });
+
         $create = [];
-        foreach ( $this->promo->participationFieldKeys() as $field) {
+        foreach ( $fields as $field) {
             $create[$field] = $request->get($field);
         }
 
         $participation = Participation::create($create);
+        if( !empty($code) ) {
+            $participation->redemptionCode()->associate($code);
+            $participation->save();
+        }
 
         return [ 'success' => !empty($participation) ];
 
+    }
+
+    public function getRedemptionCode($code) {
+        return RedemptionCode::where('code', $code)->whereDoesntHave('participation')->first();
     }
 
 }

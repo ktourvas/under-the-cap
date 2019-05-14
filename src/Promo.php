@@ -17,6 +17,15 @@ class Promo {
     }
 
     /**
+     * The slug identifier of the promo
+     *
+     * @return string
+     */
+    public function slug() {
+        return $this->info['slug'];
+    }
+
+    /**
      * The status of the current promotion. Returns pending (p), running (r) or completed (e)
      *
      * @return string
@@ -138,6 +147,42 @@ class Promo {
             ->mapWithKeys(function ($type, $key ) {
             return [ $key => $type['title'] ];
         })->toArray();
+
+    }
+
+    /**
+     * The draws associated with the promo which are considered adhoc. Adhoc draws are presented as options for
+     * manually requesting a draw by admins.
+     *
+     * @return array
+     * @throws PromoConfigurationException
+     */
+    public function adhocDraws() {
+
+        $this->validateDrawsConfig();
+
+        return collect($this->info['draws']['adhoc'])
+            ->mapWithKeys(function ($type, $key ) {
+                return [ $key => $type['title'] ];
+            })->toArray();
+
+    }
+
+    /**
+     * The draws associated with the promo which are considered adhoc. Adhoc draws are presented as options for
+     * manually requesting a draw by admins.
+     *
+     * @return array
+     * @throws PromoConfigurationException
+     */
+    public function draw($id) {
+
+        $this->validateDrawsConfig();
+
+        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'])
+            ->filter(function ( $type, $key ) use ($id) {
+                return $key == $id;
+            })->first();
 
     }
 

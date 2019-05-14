@@ -10,15 +10,36 @@
     </nav>
 
     <nav class="navbar" role="navigation" aria-label="main navigation">
+
         <div class="navbar-item">
-            <f-post inline-template action="/api/utc/draws/{{ $promo }}">
-                <button class="button" @click="onSubmit">
-                    <span>Κλήρωση</span>
-                    <span class="icon is-small">
-                        <i class="fas fa-random"></i>
-                    </span>
-                </button>
+
+            <f-post inline-template action="/api/utc/draws/{{ $promo->slug() }}" draw="{{ array_keys($promo->adhocDraws())[0] }}">
+
+                <div class="field has-addons has-addons-centered">
+                    <p class="control">
+                        <span class="select">
+                            <select v-model="added.draw">
+                                @foreach($promo->adhocDraws() as $key => $draw)
+                                    <option value="{{ $key }}">{{ $draw }}</option>
+                                @endforeach
+                            </select>
+                        </span>
+                    </p>
+                    <p class="control">
+                        <button class="button is-success" @click="onSubmit" :disabled="sending">
+                            <span class="icon is-small" v-if="sending">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </span>
+                            <span>Κλήρωση</span>
+                            <span class="icon is-small">
+                                <i class="fas fa-random"></i>
+                            </span>
+                        </button>
+                    </p>
+                </div>
+
             </f-post>
+
         </div>
 
         @if($participations->count())
@@ -35,7 +56,7 @@
                     {{--</a>--}}
                 {{--</f-download>--}}
 
-                <f-download inline-template action="/api/utc/draws/{{ $promo }}/download">
+                <f-download inline-template action="/api/utc/draws/{{ $promo->slug() }}/download">
                     <button class="button" @click="onSubmit">
                         <span>Download</span>
                         <span class="icon is-small">
@@ -77,7 +98,7 @@
 
                 @if($index == 0 || $win->associated_date !== $participations[$index-1]->associated_date)
 
-                    <tr id="part{{ $win->id }}">
+                    <tr>
                         <th colspan="16" class="is-success">
                             Date: {{ $win->associated_date }}
                         </th>
@@ -120,7 +141,7 @@
                     <td>
 
                     @if($win->runnerup == 1 && $win->bumped == 0)
-                        <f-put inline-template action="/api/utc/draws/{{ $promo }}/{{ $win->id }}/upgrade" confirmation="true">
+                        <f-put inline-template action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}/upgrade" confirmation="true">
                             <button class="button is-success" @click="onSubmit">
                                 <span>Upgrade</span>
                                 <span class="icon is-small">
@@ -129,7 +150,7 @@
                             </button>
                         </f-put>
                     @elseif($win->runnerup == 1 && $win->bumped == 1)
-                        <f-delete inline-template action="/api/utc/draws/{{ $promo }}/{{ $win->id }}/upgrade" confirmation="true">
+                        <f-delete inline-template action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}/upgrade" confirmation="true">
                             <button class="button is-warning" @click="onSubmit">
                                 <span>Downgrade</span>
                                 <span class="icon is-small">
@@ -138,7 +159,7 @@
                             </button>
                         </f-delete>
                     @endif
-                        <f-delete inline-template del-item="part{{ $win->id }}" action="/api/utc/draws/{{ $promo }}/{{ $win->id }}">
+                        <f-delete inline-template del-item="part{{ $win->id }}" action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}">
                             <form method="post" class="f-delete confirm" @submit.prevent="onSubmit">
                                 <input type="hidden" name="_method" value="delete">
                                 <button class="button is-danger">

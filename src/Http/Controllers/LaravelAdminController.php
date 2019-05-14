@@ -41,17 +41,17 @@ class LaravelAdminController extends Controller {
     public function draws(Request $request, $promo) {
         return view('utc::admin.wins', [
             'participations' =>
-
                 Win::
-//                orderBy('type_id', 'desc')
                     with('participation')
-//                    ->orderByRaw('associated_date DESC, runnerup ASC')
+
+                    ->orderBy('type_id', 'desc')
                     ->orderBy('associated_date', 'DESC')
                     ->orderBy('runnerup', 'ASC')
 
                     ->get(),
-            'promo' => $promo,
-            'wintypes' => $this->promo->winTypes(),
+//            'promo' => $promo,
+//            'wintypes' => $this->promo->winTypes(),
+            'promo' => $this->promo
         ]);
     }
 

@@ -19,9 +19,15 @@ class UnderTheCapServiceProvider extends ServiceProvider
         if (! $this->app->routesAreCached()) {
             require __DIR__.'/routes/web.php';
         }
+
         $this->publishes([
             __DIR__.'/../config/under-the-cap.php' => config_path('under-the-cap.php'),
         ]);
+
+        $this->publishes([
+            __DIR__.'/../config/under-the-cap.php' => config_path('under-the-cap.php'),
+        ]);
+
     }
 
     /**

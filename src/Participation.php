@@ -11,7 +11,13 @@ class Participation extends Model {
     {
         $this->table = config('under-the-cap.current.participation_table');
 
-        $this->fillable = array_keys(config('under-the-cap.current.participation_fields'));
+        $this->fillable =
+            array_merge(
+                array_keys(config('under-the-cap.current.participation_fields')),
+                [
+                    'code_id'
+                ]
+            );
 
         $this->attributted_fields = collect(config('under-the-cap.current.participation_fields'))->map(function($field) {
             return $field;
