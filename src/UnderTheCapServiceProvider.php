@@ -37,7 +37,7 @@ class UnderTheCapServiceProvider extends ServiceProvider
      */
     public function register()
     {
-//        dd(config('laravel-admin'));
+
         if(!empty(config('laravel-admin'))) {
 
             $appends = [];
@@ -64,6 +64,14 @@ class UnderTheCapServiceProvider extends ServiceProvider
 
             config([
                 'laravel-admin.sidebar_includes' => array_merge(config('laravel-admin.sidebar_includes'), $appends)
+            ]);
+
+            config([
+                'laravel-admin.dashboard.blocks' => array_merge(
+                    config('laravel-admin.dashboard.blocks'),
+                    [
+                        \UnderTheCap\Invokable\Stats::class
+                    ])
             ]);
 
         }
