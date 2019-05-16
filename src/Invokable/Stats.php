@@ -23,7 +23,7 @@ class Stats {
 
             if( $index != 'current' && !empty($promoInfo['participation_stats_table']) ) {
 
-                $stats = ParticipationsDay::orderBy('date', 'DESC')->get();
+                $stats = ParticipationsDay::orderBy('date', 'ASC')->get();
 
                 $result[] = [
                     'title' => $promoInfo['name'],

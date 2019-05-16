@@ -130,49 +130,42 @@ class WinsController extends Controller {
 
     private function doDraw( $type, $number, $extra = [], $restrict = [], $runnerups = false, $associated_date = null, $confirmed = false ) {
 
+        $wins = Participation::
+
+        where(function($q) use ($extra) {
+            if( !empty($extra) ) {
+                foreach ($extra as $column => $value ) {
+                    $q->where($column, $value);
+                }
+            }
+        })
+            ->whereHas('win', function($q) use ($type) {
+                $q->where('type_id', $type);
+            })
+            ->with('win')
+            ->get();
+
+        $existingCount = $wins->map(function($participation) {
+            return $participation;
+        })->reject(function($participation) use ($runnerups) {
+            return $runnerups ? $participation->win()->first()->runnerup == 0 : $participation->win()->first()->runnerup == 1;
+        })->count();
+
         /**
          * if excludes are set up, retrieve all wins and update the excludes array
          */
         $excludes = [];
 
-        if(!empty($restrict)) {
-
-            $all = Participation::whereHas('win')->get();
-
-            foreach($all as $participation) {
-                foreach ($restrict as $column) {
-
-                    if(empty($excludes[$column])) {
-                        $excludes[$column] = [ $participation[$column] ];
-                    } else {
-                        $excludes[$column][] = $participation[$column];
-                    }
-                }
+        if(!empty($restrict) && $wins->count() > 0) {
+            foreach ($restrict as $column) {
+                $excludes[$column] = [];
+                $excludes[$column] = $wins->map(function($participation) use ($column, $excludes) {
+                    return $participation[$column];
+                })->toArray();
             }
-
         }
 
-        /**
-         * get the existing wins count of the specific description
-         */
-        $existing = Win::where(function($q) use ($type, $extra, $runnerups) {
-            $q->where('type_id', $type);
-            if($runnerups) {
-                $q->where('runnerup', 1);
-            }
-        });
-
-        if( !empty($extra) ) {
-            $existing->whereHas('participation', function($q) use ($extra) {
-                foreach ($extra as $column => $value ) {
-                    $q->where($column, $value);
-                }
-            });
-        }
-
-        $existing = $existing->count();
-
-        if( ($number - $existing) > 0) {
+        if( ($number - $existingCount) > 0) {
 
             $new = Participation::where(function($q) {
 
@@ -189,68 +182,21 @@ class WinsController extends Controller {
                 });
             }
 
+            $new->inRandomOrder()->limit( ($number - $existingCount) );
+
             if(!empty($restrict)) {
-
-                for($i=0;$i<($number - $existing);$i++) {
-
-                    foreach ($excludes as $column => $values) {
-                        $new->whereNotIn($column, $values);
-                    }
-
-                    $participation = $new->inRandomOrder()->first();
-
-
-                    if(!empty($participation)) {
-
-                        $participation->win()->create([
-                            'type_id' => $type,
-                            'runnerup' => $runnerups ? 1 : 0,
-                            'confirmed' => $confirmed ? 1 : 0,
-                        ]);
-
-                        foreach ($restrict as $column) {
-
-                            $excludes[$column][] = $participation[$column];
-
-                        }
-
-                    } else {
-                        break;
-                    }
-
-                }
-
-
-            } else {
-
-                $new = $new
-                    ->inRandomOrder()
-                    ->limit( ($number - $existing) )
-                    ->get();
-
-                $new->map(function($participation) use ($type, $runnerups, $confirmed) {
-
-                    $participation->win()->create([
-                        'type_id' => $type,
-                        'runnerup' => $runnerups ? 1 : 0,
-                        'confirmed' => $confirmed ? 1 : 0,
-                    ]);
-
-                });
-
+                $new->distinct();
             }
 
+            $new = $new->get();
 
-
-
-
-
-
-
-
-
-
-
+            $new->map(function($participation) use ($type, $runnerups, $confirmed) {
+                $participation->win()->create([
+                    'type_id' => $type,
+                    'runnerup' => $runnerups ? 1 : 0,
+                    'confirmed' => $confirmed ? 1 : 0,
+                ]);
+            });
 
         }
         return null;
