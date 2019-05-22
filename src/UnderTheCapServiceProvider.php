@@ -84,6 +84,8 @@ class UnderTheCapServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-//        return [  ];
+        return [
+            'UnderTheCap\Providers\EventServiceProvider'
+        ];
     }
 }

@@ -4,6 +4,7 @@ namespace UnderTheCap\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use UnderTheCap\Events\ParticipationSubmitted;
 use UnderTheCap\Exceptions\PromoStatusException;
 use UnderTheCap\Exceptions\RedemptionCodeException;
 use UnderTheCap\Participation;
@@ -45,6 +46,10 @@ class ParticipationsController extends Controller {
         }
 
         $participation = Participation::create($create);
+
+        if(!empty($participation)) {
+            event( new ParticipationSubmitted($participation) );
+        }
 
         return [ 'success' => !empty($participation) ];
 
