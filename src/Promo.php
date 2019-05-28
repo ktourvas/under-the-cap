@@ -13,6 +13,10 @@ class Promo {
     public function __construct()
     {
         $this->info = config('under-the-cap.current');
+
+        $this->info['start_date'] = strtotime($this->info['start_date']);
+        $this->info['end_date'] = strtotime($this->info['end_date']);
+
         $this->participation_fields = collect(config('under-the-cap.current.participation_fields'));
     }
 
