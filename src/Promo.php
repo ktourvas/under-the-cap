@@ -2,17 +2,21 @@
 
 namespace UnderTheCap;
 
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Collection;
 use UnderTheCap\Exceptions\PromoConfigurationException;
 use UnderTheCap\Exceptions\PromoStatusException;
+use Carbon\Carbon;
 
 class Promo {
 
-    protected $info, $participation_fields;
+    protected $info, $participation_fields, $period;
 
     public function __construct()
     {
         $this->info = config('under-the-cap.current');
+
+        $this->period = CarbonPeriod::create($this->info['start_date'], $this->info['end_date']);
 
         $this->info['start_date'] = strtotime($this->info['start_date']);
         $this->info['end_date'] = strtotime($this->info['end_date']);
@@ -36,6 +40,21 @@ class Promo {
      */
     public function status() {
         return time() >= $this->info['start_date'] ? time() >= $this->info['end_date'] ? 'e' : 'r' : 'p';
+    }
+
+    /**
+     * @return CarbonPeriod
+     */
+    public function period() {
+        return $this->period;
+    }
+
+    /**
+     * Returns the integer number of the current date in respect to the promo interval
+     * @return int
+     */
+    public function dayNumber($zerobased = false) {
+        return $this->period->getStartDate()->setHour('0')->diffInDays(Carbon::now()) + ($zerobased ? 0 : 1);
     }
 
     /**

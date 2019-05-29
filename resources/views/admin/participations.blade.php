@@ -98,7 +98,8 @@
 
                     <td>{{ $participation->created_at }}</td>
                     <td>
-                        <f-delete inline-template del-item="part{{ $participation->id }}" action="/admin/participations/{{ $participation->id }}">
+                        {{--<f-delete inline-template del-item="part{{ $participation->id }}" action="/admin/participations/{{ $participation->id }}">--}}
+                        <f-delete inline-template del-item="part{{ $participation->id }}" action="/api/utc/{{ $promo }}/participations/{{ $participation->id }}" message="Πρόκειται να σβήσετε μία συμμετοχή. Σίγουρα;">
                             <form method="post" class="f-delete confirm" @submit.prevent="onSubmit">
                                 <input type="hidden" name="_method" value="delete">
                                 <button class="button is-danger">

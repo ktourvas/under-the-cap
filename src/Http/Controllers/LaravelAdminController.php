@@ -38,6 +38,10 @@ class LaravelAdminController extends Controller {
         ]);
     }
 
+    public function deleteParticipation($promo, $id) {
+        return [ 'success' => Participation::find($id)->delete() ];
+    }
+
     public function draws(Request $request, $promo) {
         return view('utc::admin.wins', [
             'participations' =>

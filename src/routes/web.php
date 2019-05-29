@@ -11,6 +11,8 @@ Route::group([ 'middleware' => [ 'api', ] ], function () {
         'LaravelAdmin'
     ] ], function () {
 
+        Route::delete('/api/utc/{promo}/participations/{id}', 'UnderTheCap\Http\Controllers\LaravelAdminController@deleteParticipation');
+
         Route::post('/api/utc/draws/{promo}/download', 'UnderTheCap\Http\Controllers\WinsController@download');
 
         Route::delete('/api/utc/draws/{promo}/{id}', 'UnderTheCap\Http\Controllers\WinsController@delete');
@@ -22,6 +24,7 @@ Route::group([ 'middleware' => [ 'api', ] ], function () {
         Route::post('/api/utc/draws/{promo}', 'UnderTheCap\Http\Controllers\WinsController@draw');
 
         Route::post('/api/utc/participations/{promo}/download', 'UnderTheCap\Http\Controllers\LaravelAdminController@download');
+
 
     });
 
