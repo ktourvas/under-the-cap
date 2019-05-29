@@ -70,8 +70,10 @@ class UnderTheCapServiceProvider extends ServiceProvider
                 'laravel-admin.dashboard.blocks' => array_merge(
                     config('laravel-admin.dashboard.blocks'),
                     [
-                        \UnderTheCap\Invokable\Stats::class
-                    ])
+                        \UnderTheCap\Invokable\Stats::class,
+
+                    ]
+                )
             ]);
 
         }

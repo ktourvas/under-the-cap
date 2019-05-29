@@ -3,6 +3,7 @@
 namespace UnderTheCap\Invokable;
 
 use UnderTheCap\Entities\ParticipationsDay;
+use UnderTheCap\Participation;
 
 class Stats {
 
@@ -42,6 +43,19 @@ class Stats {
                     ]
                 ];
 
+                $result[] = [
+                    'type' => 'number-tile',
+                    'title' => 'Participations total',
+                    'number' => Participation::count(),
+                    'url' => 'utc/participations/exohi',
+                ];
+
+                $result[] = [
+                    'type' => 'number-tile',
+                    'title' => 'Participations today',
+                    'number' => Participation::whereDate('created_at', date('Y-m-d', time()))->count(),
+                    'url' => 'utc/participations/exohi',
+                ];
 
             }
         }
