@@ -25,6 +25,15 @@ class Promo {
     }
 
     /**
+     * The title of the promo
+     *
+     * @return string
+     */
+    public function title() {
+        return $this->info['name'];
+    }
+
+    /**
      * The slug identifier of the promo
      *
      * @return string

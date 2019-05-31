@@ -5,7 +5,7 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
             <li><a href="{{ config('laravel-admin.root_url') }}">Dashboard</a></li>
-            <li><a href="{{ config('laravel-admin.root_url') }}/utc/participations">UTC Participations</a></li>
+            <li><a href="{{ config('laravel-admin.root_url') }}/utc/participations/{{ $promo->slug() }}">Participations - {{ $promo->title() }}</a></li>
         </ul>
     </nav>
 
@@ -30,7 +30,7 @@
                 More
             </a>
             <div class="navbar-dropdown">
-                <f-download inline-template action="/api/utc/participations/{{ $promo }}/download">
+                <f-download inline-template action="/api/utc/participations/{{ $promo->slug() }}/download">
                     <a class="navbar-item" @click.prevent="onSubmit">
                     {{--<a class="navbar-item" onclick="event.preventDefault();document.getElementById('download-form').submit();">--}}
                         Download
@@ -99,7 +99,7 @@
                     <td>{{ $participation->created_at }}</td>
                     <td>
                         {{--<f-delete inline-template del-item="part{{ $participation->id }}" action="/admin/participations/{{ $participation->id }}">--}}
-                        <f-delete inline-template del-item="part{{ $participation->id }}" action="/api/utc/{{ $promo }}/participations/{{ $participation->id }}" message="Πρόκειται να σβήσετε μία συμμετοχή. Σίγουρα;">
+                        <f-delete inline-template del-item="part{{ $participation->id }}" action="/api/utc/{{ $promo->slug() }}/participations/{{ $participation->id }}" message="Πρόκειται να σβήσετε μία συμμετοχή. Σίγουρα;">
                             <form method="post" class="f-delete confirm" @submit.prevent="onSubmit">
                                 <input type="hidden" name="_method" value="delete">
                                 <button class="button is-danger">

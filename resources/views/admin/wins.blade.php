@@ -5,7 +5,7 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
             <li><a href="{{ config('laravel-admin.root_url') }}">Dashboard</a></li>
-            <li><a href="{{ config('laravel-admin.root_url') }}/utc/wins">UTC Draws</a></li>
+            <li><a href="{{ config('laravel-admin.root_url') }}/utc/wins/{{ $promo->slug() }}">Draws - {{ $promo->title() }}</a></li>
         </ul>
     </nav>
 
@@ -71,6 +71,12 @@
     </nav>
 
     @if($participations->count() > 0)
+
+
+
+
+
+
         <table class="table is-fullwidth is-size-7">
             <thead>
             <tr>
@@ -139,37 +145,63 @@
                     <td>{{ $win->created_at }}</td>
 
                     <td>
-
-                    @if($win->runnerup == 1 && $win->bumped == 0)
-                        <f-put inline-template action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}/upgrade" confirmation="true">
-                            <button class="button is-success" @click="onSubmit">
-                                <span>Upgrade</span>
-                                <span class="icon is-small">
-                                    <i class="fas fa-arrow-up"></i>
-                                </span>
-                            </button>
-                        </f-put>
-                    @elseif($win->runnerup == 1 && $win->bumped == 1)
-                        <f-delete inline-template action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}/upgrade" confirmation="true">
-                            <button class="button is-warning" @click="onSubmit">
-                                <span>Downgrade</span>
-                                <span class="icon is-small">
-                                <i class="fas fa-arrow-down"></i>
-                            </span>
-                            </button>
-                        </f-delete>
-                    @endif
-                        <f-delete inline-template del-item="part{{ $win->id }}" action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}">
-                            <form method="post" class="f-delete confirm" @submit.prevent="onSubmit">
-                                <input type="hidden" name="_method" value="delete">
-                                <button class="button is-danger">
-                                    <span>Delete</span>
-                                    <span class="icon is-small">
-                                        <i class="fas fa-times"></i>
-                                    </span>
+                        <div class="dropdown is-hoverable is-small is-right">
+                            <div class="dropdown-trigger">
+                                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                                    <span>Actions</span>
+                                    <span class="icon is-small"><i class="fas fa-angle-down" aria-hidden="true"></i></span>
                                 </button>
-                            </form>
-                        </f-delete>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                <div class="dropdown-content">
+                                    @if($win->runnerup == 1 && $win->bumped == 0)
+                                        <div class="dropdown-item">
+                                            <f-put inline-template action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}/upgrade" confirmation="true">
+                                                <button class="button is-success is-small is-fullwidth" @click="onSubmit">
+                                                    <span>Upgrade</span>
+                                                    <span class="icon is-small">
+                                                        <i class="fas fa-arrow-up"></i>
+                                                    </span>
+                                                </button>
+                                            </f-put>
+                                        </div>
+                                    @elseif($win->runnerup == 1 && $win->bumped == 1)
+                                        <div class="dropdown-item">
+                                            <f-delete inline-template action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}/upgrade" confirmation="true">
+                                                <button class="button is-warning is-small is-fullwidth" @click="onSubmit">
+                                                    <span>Downgrade</span>
+                                                    <span class="icon is-small">
+                                                        <i class="fas fa-arrow-down"></i>
+                                                    </span>
+                                                </button>
+                                            </f-delete>
+                                        </div>
+                                    @endif
+                                    <div class="dropdown-item">
+                                        <f-delete inline-template del-item="part{{ $win->id }}" action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}">
+                                            <form method="post" class="f-delete confirm" @submit.prevent="onSubmit">
+                                                <input type="hidden" name="_method" value="delete">
+                                                <button class="button is-danger is-small is-fullwidth">
+                                                    <span>Delete</span>
+                                                    <span class="icon is-small"><i class="fas fa-times"></i></span>
+                                                </button>
+                                            </form>
+                                        </f-delete>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{--<f-delete inline-template del-item="part{{ $win->id }}" action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}">--}}
+                            {{--<form method="post" class="f-delete confirm" @submit.prevent="onSubmit">--}}
+                                {{--<input type="hidden" name="_method" value="delete">--}}
+                                {{--<button class="button is-danger is-small">--}}
+                                    {{--<span>Delete</span>--}}
+                                    {{--<span class="icon is-small">--}}
+                                        {{--<i class="fas fa-times"></i>--}}
+                                    {{--</span>--}}
+                                {{--</button>--}}
+                            {{--</form>--}}
+                        {{--</f-delete>--}}
                     </td>
                 </tr>
             @endforeach

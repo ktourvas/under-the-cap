@@ -32,7 +32,7 @@ class LaravelAdminController extends Controller {
 
         })->paginate('50');
         return view('utc::admin.participations', [
-            'promo' => $promo,
+            'promo' => $this->promo,
             'q' => $request->q,
             'participations' => $participations
         ]);
@@ -47,7 +47,6 @@ class LaravelAdminController extends Controller {
             'participations' =>
                 Win::
                     with('participation')
-
                     ->orderBy('type_id', 'desc')
                     ->orderBy('associated_date', 'DESC')
                     ->orderBy('runnerup', 'ASC')

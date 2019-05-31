@@ -4,7 +4,7 @@ Route::group([ 'middleware' => [ 'api', ] ], function () {
 
     Route::post('/api/participations', 'UnderTheCap\Http\Controllers\ParticipationsController@submit');
 
-    Route::post('/api/utc/code', 'UnderTheCap\Http\Controllers\RedemptionController@submitCode');
+    Route::post('/api/utc/code', 'UnderTheCap\Http\Controllers\ParticipationsController@submitCode');
 
     Route::group([ 'middleware' => [
         'auth:api',

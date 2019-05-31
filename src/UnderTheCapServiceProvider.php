@@ -4,6 +4,7 @@ namespace UnderTheCap;
 
 //use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider;
+use UnderTheCap\Providers\EventServiceProvider;
 
 class UnderTheCapServiceProvider extends ServiceProvider
 {
@@ -77,6 +78,9 @@ class UnderTheCapServiceProvider extends ServiceProvider
             ]);
 
         }
+
+        $this->app->register(EventServiceProvider::class);
+
     }
 
     /**

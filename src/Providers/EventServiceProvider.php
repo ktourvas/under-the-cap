@@ -3,6 +3,8 @@
 namespace UnderTheCap\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use UnderTheCap\Events\ParticipationSubmitted;
+use UnderTheCap\Listeners\InstantWinDraw;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -14,6 +16,9 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         //
+        ParticipationSubmitted::class => [
+            InstantWinDraw::class
+        ]
     ];
 
 }
