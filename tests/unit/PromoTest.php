@@ -40,7 +40,8 @@ class PromoTest extends Orchestra\Testbench\TestCase {
         $this->assertIsArray($this->promo->draws());
     }
 
-    public function testDrawReturnsArray() {
+    public function testDrawReturnsArray()
+    {
         $this->assertIsArray($this->promo->draw(1));
     }
 
@@ -88,7 +89,7 @@ class PromoTest extends Orchestra\Testbench\TestCase {
     public function testStatusPending()
     {
 
-        $this->app['config']->set( 'under-the-cap.current.start_date', time() + 86400 );
+        $this->app['config']->set( 'under-the-cap.current.start_date', date('Y-m-d H:i:s', time() + 86400) );
         $this->promo = new UnderTheCap\Promo();
         $this->assertEquals($this->promo->status(), 'p');
 
@@ -99,9 +100,8 @@ class PromoTest extends Orchestra\Testbench\TestCase {
 
     public function testStatusEnded()
     {
-
-        $this->app['config']->set( 'under-the-cap.current.start_date', time() - ( 2*86400 ) );
-        $this->app['config']->set( 'under-the-cap.current.end_date', time() - 86400 );
+        $this->app['config']->set( 'under-the-cap.current.start_date', date('Y-m-d H:i:s', time() - ( 2*86400 ) ) );
+        $this->app['config']->set( 'under-the-cap.current.end_date', date('Y-m-d H:i:s', time() - 86400 ) );
         $this->promo = new UnderTheCap\Promo();
         $this->assertEquals($this->promo->status(), 'e');
 

@@ -207,11 +207,28 @@ class Promo {
      * @return array
      * @throws PromoConfigurationException
      */
+    public function instantDraws() {
+
+        $this->validateDrawsConfig();
+
+        if (!empty($this->info['draws']['instant'])) {
+            return collect($this->info['draws']['instant']);
+        }
+        return null;
+    }
+
+    /**
+     * The draws associated with the promo which are considered adhoc. Adhoc draws are presented as options for
+     * manually requesting a draw by admins.
+     *
+     * @return array
+     * @throws PromoConfigurationException
+     */
     public function draw($id) {
 
         $this->validateDrawsConfig();
 
-        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'])
+        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'] + $this->info['draws']['instant'])
             ->filter(function ( $type, $key ) use ($id) {
                 return $key == $id;
             })->first();

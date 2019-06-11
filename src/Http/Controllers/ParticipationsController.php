@@ -69,11 +69,11 @@ class ParticipationsController extends Controller {
 //        }
 
         // Check if the request comes with
-        if(\Auth::guest()) {
+        if( $request->user('api') === null ) {
             $participation = Participation::create($create);
         } else {
             // Remember User has to use UnderTheCap/Participant
-            $participation = $request->user()->participations()->create($create);
+            $participation = $request->user('api')->participations()->create($create);
         }
 
 

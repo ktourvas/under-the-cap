@@ -24,7 +24,7 @@ class InstantWinDraw
      */
     public function handle(ParticipationSubmitted $event)
     {
-        dd($event);
+//        dd($event);
         // Access the order using $event->order...
     }
 }

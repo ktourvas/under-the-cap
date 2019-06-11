@@ -1,8 +1,8 @@
 <?php
 
-Route::group([ 'middleware' => [ 'api', ] ], function () {
+Route::group([ 'middleware' => [ 'api' ] ], function () {
 
-    Route::post('/api/participations', 'UnderTheCap\Http\Controllers\ParticipationsController@submit');
+    Route::post('/api/utc/participations', 'UnderTheCap\Http\Controllers\ParticipationsController@submit');
 
     Route::post('/api/utc/code', 'UnderTheCap\Http\Controllers\ParticipationsController@submitCode');
 
@@ -24,7 +24,6 @@ Route::group([ 'middleware' => [ 'api', ] ], function () {
         Route::post('/api/utc/draws/{promo}', 'UnderTheCap\Http\Controllers\WinsController@draw');
 
         Route::post('/api/utc/participations/{promo}/download', 'UnderTheCap\Http\Controllers\LaravelAdminController@download');
-
 
     });
 

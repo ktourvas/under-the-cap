@@ -3,7 +3,8 @@
   "type": "laravel package",
   "require": {
     "laravel/framework": "^5.7",
-    "phpunit/phpunit": "^7.5"
+    "phpunit/phpunit": "^7.5",
+    "konrness/instant-win": "^0.2.0"
   },
   "license": "MIT",
   "authors": [

@@ -36,11 +36,13 @@ class WinsController extends Controller {
         return [ 'success' => Win::find($id)->delete() ];
     }
 
-    public function draw(Request $request, $promo) {
+    public function draw(Request $request) {
 
         if(!empty($request->draw)) {
 
-            $draw = $this->promo->draw($request->draw);
+            $draw = array_merge($this->promo->draw($request->draw), [
+                'id' => $request->draw
+            ]);
 
             if( !empty($draw['associate_participation_column']) && !empty($draw['associate_participation_column']['values']) ) {
 
@@ -50,37 +52,21 @@ class WinsController extends Controller {
 
                 foreach ($draw['associate_participation_column']['values'] as $value) {
 
-                    $this->doDraw($request->draw, 1,
-                        [
-                            $draw['associate_participation_column']['column'] => $value
-                        ],
-                        (!empty($draw['restrict']) ? $draw['restrict'] : []),
-                        false);
+                    $draw['extra'] = [
+                        $draw['associate_participation_column']['column'] => $value
+                    ];
 
-                    $this->doDraw($request->draw, $draw['runnerups_num'],
-                        [
-                            $draw['associate_participation_column']['column'] => $value
-                        ],
-                        (!empty($draw['restrict']) ? $draw['restrict'] : []),
-                        true);
+                    $this->doDraw($draw, 1, false, false);
+
+                    $this->doDraw($draw, $draw['runnerups_num'],true, false);
 
                 }
 
-
             } else {
 
-                $this->doDraw(
-                    $request->draw,
-                    $draw['winners_num'],
-                    [],
-                    (!empty($draw['restrict']) ? $draw['restrict']: []),
-                    false);
-                $this->doDraw(
-                    $request->draw,
-                    $draw['runnerups_num'],
-                    [],
-                    (!empty($draw['restrict']) ? $draw['restrict']: []),
-                    true);
+                $this->doDraw($draw, $draw['winners_num'], false, false);
+
+                $this->doDraw($draw, $draw['runnerups_num'], true, false);
 
             }
 
@@ -115,35 +101,14 @@ class WinsController extends Controller {
     }
 
     /**
-     * TODO: refactor => two params, 1. ID, 2. info
-     * TODO: clear up process logic
-     *
-     * @param $type
-     * @param $number
-     * @param array $extra
-     * @param array $restrict
-     * @param bool $runnerups
-     * @param null $associated_date
-     * @param bool $confirmed
-     * @return null
+     * @param $info The information regarding the draw
+     * @param $number The number of wins to be drawn
+     * @param bool $runnerups Whether to draw of wins or runner ups
+     * @param bool $confirmed Whether to flag wins as confirmed
      */
+    private function doDraw( $info, $number, $runnerups = false, $confirmed = false ) {
 
-    private function doDraw( $type, $number, $extra = [], $restrict = [], $runnerups = false, $associated_date = null, $confirmed = false ) {
-
-        $wins = Participation::
-
-        where(function($q) use ($extra) {
-            if( !empty($extra) ) {
-                foreach ($extra as $column => $value ) {
-                    $q->where($column, $value);
-                }
-            }
-        })
-            ->whereHas('win', function($q) use ($type) {
-                $q->where('type_id', $type);
-            })
-            ->with('win')
-            ->get();
+        $wins = $this->pullWins($info);
 
         $existingCount = $wins->map(function($participation) {
             return $participation;
@@ -151,56 +116,96 @@ class WinsController extends Controller {
             return $runnerups ? $participation->win()->first()->runnerup == 0 : $participation->win()->first()->runnerup == 1;
         })->count();
 
-        /**
-         * if excludes are set up, retrieve all wins and update the excludes array
-         */
-        $excludes = [];
-
-        if(!empty($restrict) && $wins->count() > 0) {
-            foreach ($restrict as $column) {
-                $excludes[$column] = [];
-                $excludes[$column] = $wins->map(function($participation) use ($column, $excludes) {
-                    return $participation[$column];
-                })->toArray();
-            }
-        }
-
         if( ($number - $existingCount) > 0) {
 
-            $new = Participation::where(function($q) {
+            $new = Participation::whereDoesntHave('win', function($q) use ($info)  {
+                $q->where('type_id', $info['id']);
+            });
 
-            })
-                ->whereDoesntHave('win', function($q)use ($type)  {
-                    $q->where('type_id', $type);
-                });
+            $new = $this->drawSqlAddExcludes($new, $info, $wins);
 
-            if( !empty($extra) ) {
-                $new->where(function($q) use ($extra) {
-                    foreach ($extra as $column => $value ) {
-                        $q->where($column, $value);
-                    }
-                });
-            }
+            $new = $this->drawSqlAddExtras($new, $info);
 
             $new->inRandomOrder()->limit( ($number - $existingCount) );
 
-            if(!empty($restrict)) {
-                $new->distinct();
-            }
-
             $new = $new->get();
 
-            $new->map(function($participation) use ($type, $runnerups, $confirmed) {
+            $new->map(function($participation) use ($info, $runnerups, $confirmed) {
                 $participation->win()->create([
-                    'type_id' => $type,
+                    'type_id' => $info['id'],
                     'runnerup' => $runnerups ? 1 : 0,
                     'confirmed' => $confirmed ? 1 : 0,
                 ]);
             });
 
         }
-        return null;
     }
+
+    private function drawSqlAddExtras($q, $info) {
+        if( !empty( $info['extra'] ) ) {
+            foreach ( $info['extra'] as $column => $value ) {
+                $q->where($column, $value);
+            }
+        }
+        return $q;
+    }
+
+    /**
+     * @param $q
+     * @param $info
+     * @param $wins
+     * @return mixed
+     */
+    private function drawSqlAddExcludes($q, $info, $wins) {
+        if( !empty($info['restrict']) ) {
+
+            if($wins->count() > 0) {
+
+                foreach ($info['restrict'] as $column) {
+                    $excludes = $wins->map(function ($participation) use ($column) {
+                        return $participation[$column];
+                    })->toArray();
+                    $q->whereNotIn($column, $excludes);
+                }
+
+            }
+
+            $q->distinct();
+        }
+        return $q;
+    }
+
+    /**
+     * Pull all the wins of a given type filtered with associated columns if any.
+     * Ex. if we are drawing for a choice of present that a user has submitted with his participation.
+     *
+     * @param $type
+     * @param $extra
+     * @return mixed
+     */
+    private function pullWins($info) {
+        $wins = Participation::
+
+        where(function($q) use ($info) {
+            if( !empty($info['extra']) ) {
+                foreach ($info['extra'] as $column => $value ) {
+                    $q->where($column, $value);
+                }
+            }
+        })
+            ->whereHas('win', function($q) use ($info) {
+                $q->where('type_id', $info['id']);
+            })
+            ->with('win')
+//            ->toSql()
+            ->get()
+        ;
+        return $wins;
+    }
+
+
+
+
 
 
 
