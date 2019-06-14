@@ -16,49 +16,31 @@ class InstantWinsManager {
 
     function __invoke($id, $info)
     {
-
+        // Pull the available presents. If wins are not related to specific presents use one generic present item
+        // with the total of wins expected
+        $presents = $this->getPresents($id);
         $status = $this->getStatus($id, $info);
-//        dd($status);
-        if( $status['max_winners'] == $status['wins'] ) {
+
+        if($presents->count() == 0 || $status['wins'] >=  $info['max_daily_wins'] ) {
             return false;
         }
 
-        $win = $this->play($status);
-
         $status['plays']++;
-
+        $win = $this->play($status);
         if($win) {
-
             $status['wins']++;
-
-            $available = $status['presents']->map(function($item, $key) {
-                return $item;
-            })->reject(function($item, $key) use ($status) {
-
-                switch ($status['limit_presents_by']) {
-                    case 'totals':
-                        return ($item['given'] == $item['total'])
-                            || ($item['daily_count'] > 0 && $item['given'] == $item['daily_count']);
-                        break;
-                    case 'daily':
-                        return $item['given'] == $item['daily_count'];
-                        break;
-                }
-
-            });
-
-            $present = $available->random();
-
-            $status['presents'] = $status['presents']->map(function($item, $key) use ($present) {
-                if( $item['id'] == $present['id'] ) {
-                    $item['given']++;
-                }
-                return $item;
-            });
-
+            $present = $presents->random();
+            $present->total_given++;
+            $present->save();
         }
 
         Storage::disk()->put(date('Ymd', time()).'_instant'.$id.'.txt', serialize($status));
+
+        if($win && !empty($present)) {
+            return $present;
+        }
+
+        return false;
 
     }
 
@@ -69,15 +51,15 @@ class InstantWinsManager {
      */
     protected function play($status) {
         $player = new Player();
-        $player->setMaxWins($status['max_winners']);
-        $player->setCurWins($status['wins']);
-        $player->setPlayCount($status['plays']);
+        $player->setMaxWins( $status['max_daily_wins'] );
+        $player->setCurWins( $status['wins'] );
+        $player->setPlayCount( $status['plays'] );
         $timePeriod = new TimePeriod();
         $timePeriod->setStartTimestamp( strtotime( date('Y-m-d', time() ). $status['time_start'] ) );
         $timePeriod->setEndTimestamp( strtotime( date('Y-m-d', time() ). $status['time_end'] ) );
         $timePeriod->setCurrentTimestamp( time() );
         $player->setTimePeriod( $timePeriod );
-        $player->setDistribution(new EvenOverTimeDistribution());
+        $player->setDistribution( new EvenOverTimeDistribution() );
         return $player->isWinner();
     }
 
@@ -92,26 +74,22 @@ class InstantWinsManager {
         if( !Storage::disk('local')->exists(date('Ymd', time()).'_instant'.$id.'.txt') ) {
             return array_merge(
                 $info,
-
                 [
-
-                'wins' => 0,
-                'plays' => 0,
-                'presents' => collect($info['presents'])->map(function ($item, $key) {
-                    if(empty($item['given'])) {
-                        $item['given'] = 0;
-                    }
-                    return $item;
-                })
-
-            ]);
+                    'wins' => 0,
+                    'plays' => 0,
+                    ]
+            );
         } else {
             return unserialize(Storage::disk('local')->get(date('Ymd', time()).'_instant'.$id.'.txt'));
         }
     }
 
-    protected function checkForWin() {
-
+    protected function getPresents($draw_id) {
+        return Present::where('draw_id', $draw_id)->where(function($q) {
+            $q->where('total_give', '>', 'total_given');
+        })->get();
     }
+
+    protected function checkForWin() {}
 
 }

@@ -62,12 +62,14 @@
             <thead>
             <tr>
 
-                <th><abbr title="Position">ID (Local)</abbr></th>
-
-                <th>Redemption Code</th>
+                <th>
+                    <abbr title="Position">ID (Local)</abbr>
+                </th>
 
                 @foreach(config('under-the-cap.current.participation_fields') as $field)
-                    <th>{{ $field['title'] }}</th>
+                    <th>
+                        {{ $field['title'] }}
+                    </th>
                 @endforeach
 
                 <th>Ημ./Ώρα Δημιουργίας</th>
@@ -80,16 +82,12 @@
 
                     <th>{{ $participation->id }}</th>
 
-                    <td>
-                        @if(!empty($participation->redemptionCode))
-                            {{ $participation->redemptionCode->code }}
-                        @endif
-                    </td>
-
                     @foreach(config('under-the-cap.current.participation_fields') as $field => $info)
 
                         @if(!empty($info['is_id']))
                             <td>{{ $participation->getDynamicField($field) }}</td>
+                        @elseif(!empty($info['relation']))
+                            <td>{{ $participation[$info['relation'][0]][$info['relation'][1]] }}</td>
                         @else
                             <td>{{ $participation[$field] }}</td>
                         @endif
@@ -98,7 +96,6 @@
 
                     <td>{{ $participation->created_at }}</td>
                     <td>
-                        {{--<f-delete inline-template del-item="part{{ $participation->id }}" action="/admin/participations/{{ $participation->id }}">--}}
                         <f-delete inline-template del-item="part{{ $participation->id }}" action="/api/utc/{{ $promo->slug() }}/participations/{{ $participation->id }}" message="Πρόκειται να σβήσετε μία συμμετοχή. Σίγουρα;">
                             <form method="post" class="f-delete confirm" @submit.prevent="onSubmit">
                                 <input type="hidden" name="_method" value="delete">

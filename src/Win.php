@@ -8,7 +8,7 @@ class Win extends Model {
 
     protected $types, $promo, $draws;
 
-    protected $fillable = [ 'type_id', 'participation_id', 'bumped', 'associated_date', 'confirmed', 'runnerup' ];
+    protected $fillable = [ 'type_id', 'participation_id', 'bumped', 'associated_date', 'confirmed', 'runnerup', 'present_id' ];
 
     protected $appends = [ 'type_name' ];
 
@@ -21,6 +21,13 @@ class Win extends Model {
 
 //        $this->types = config('under-the-cap.current.win_types');
         parent::__construct($attributes);
+    }
+
+    /**
+     * The gift associated with the win
+     */
+    public function present() {
+        return $this->belongsTo('UnderTheCap\Entities\Present', 'present_id');
     }
 
     /**

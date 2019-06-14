@@ -72,17 +72,12 @@
 
     @if($participations->count() > 0)
 
-
-
-
-
-
         <table class="table is-fullwidth is-size-7">
             <thead>
             <tr>
 
                 <th><abbr title="Position">ID (Local)</abbr></th>
-                <th>Redemption Code</th>
+{{--                <th>Redemption Code</th>--}}
 
                 @foreach(config('under-the-cap.current.participation_fields') as $field)
                     <th>{{ $field['title'] }}</th>
@@ -92,6 +87,7 @@
 
                 <th>Κλήρωση</th>
                 <th>Τύπος Νίκης</th>
+                <th>Δώρο</th>
                 <th>Ημερομηνία Νίκης</th>
 
                 <th>Approved</th>
@@ -117,17 +113,12 @@
 
                     <th>{{ $win->participation->id }}</th>
 
-                    <td>
-                        @if(!empty($win->participation->redemptionCode))
-                            {{ $win->participation->redemptionCode->code }}
-                        @endif
-                    </td>
-
-
                     @foreach(config('under-the-cap.current.participation_fields') as $field => $info )
 
                         @if(!empty($info['is_id']))
                             <td>{{ $win->participation->getDynamicField($field) }}</td>
+                        @elseif(!empty($info['relation']))
+                            <td>{{ $win->participation[$info['relation'][0]][$info['relation'][1]] }}</td>
                         @else
                             <td>{{ $win->participation[$field] }}</td>
                         @endif
@@ -138,6 +129,16 @@
 
                     <td>{{ $win->draw_name }}</td>
                     <td>{{ $win->type_name }}</td>
+
+
+
+                    <td>
+                        @if($win->present()->exists())
+                            {{ $win->present->title }}
+                        @endif
+                    </td>
+
+
                     <td>{{ $win->associated_date }}</td>
 
                     <td>{{ $win->confirmed }}</td>

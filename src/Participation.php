@@ -2,13 +2,16 @@
 
 namespace UnderTheCap;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 
 class Participation extends Model {
 
-    protected $attributted_fields;
+    protected $promo, $attributted_fields;
 
     public function __construct(array $attributes = [])
     {
+        $this->promo = App::make('UnderTheCap\Promo');
+
         $this->table = config('under-the-cap.current.participation_table');
 
         $this->fillable =
@@ -58,4 +61,8 @@ class Participation extends Model {
 
     }
 
+
+    public function getpromoattribute() {
+        return $this->promo;
+    }
 }

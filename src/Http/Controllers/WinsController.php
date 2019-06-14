@@ -110,13 +110,15 @@ class WinsController extends Controller {
 
         $wins = $this->pullWins($info);
 
-        $existingCount = $wins->map(function($participation) {
-            return $participation;
-        })->reject(function($participation) use ($runnerups) {
-            return $runnerups ? $participation->win()->first()->runnerup == 0 : $participation->win()->first()->runnerup == 1;
-        })->count();
+        $existing = $wins->filter(function ($participation, $key) use ($runnerups) {
+            echo $participation->win->first()->runnerup;
+            if($runnerups) {
+                return $participation->win->first()->runnerup == 1;
+            }
+            return $participation->win->first()->runnerup == 0;
+        });
 
-        if( ($number - $existingCount) > 0) {
+        if( ($number - $existing->count()) > 0) {
 
             $new = Participation::whereDoesntHave('win', function($q) use ($info)  {
                 $q->where('type_id', $info['id']);
@@ -126,7 +128,7 @@ class WinsController extends Controller {
 
             $new = $this->drawSqlAddExtras($new, $info);
 
-            $new->inRandomOrder()->limit( ($number - $existingCount) );
+            $new->inRandomOrder()->limit( ($number - $existing->count()) );
 
             $new = $new->get();
 
@@ -185,29 +187,22 @@ class WinsController extends Controller {
      */
     private function pullWins($info) {
         $wins = Participation::
-
-        where(function($q) use ($info) {
-            if( !empty($info['extra']) ) {
-                foreach ($info['extra'] as $column => $value ) {
-                    $q->where($column, $value);
-                }
-            }
+        whereHas('win', function($q) use ($info) {
+            $q->where('type_id', $info['id']);
         })
-            ->whereHas('win', function($q) use ($info) {
-                $q->where('type_id', $info['id']);
-            })
-            ->with('win')
+            ->with(['win' => function ($query) use ($info) {
+                $query->where('type_id', $info['id']);
+            }]);
+        if( !empty($info['extra']) ) {
+            foreach ($info['extra'] as $column => $value ) {
+                $wins->where($column, $value);
+            }
+        }
+        return $wins
 //            ->toSql()
             ->get()
         ;
-        return $wins;
     }
-
-
-
-
-
-
 
     public function download(Request $request, $promo) {
 

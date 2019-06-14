@@ -12,9 +12,12 @@ class Promo {
 
     protected $info, $participation_fields, $period;
 
-    public function __construct()
+    public function __construct($info = null)
     {
-        $this->info = config('under-the-cap.current');
+        $this->info = $info;
+        if( empty($this->info) ) {
+            $this->info = config('under-the-cap.current');
+        }
 
         $this->period = CarbonPeriod::create($this->info['start_date'], $this->info['end_date']);
 
@@ -145,21 +148,46 @@ class Promo {
 
     public function validateDrawsConfig() {
 
-        foreach ($this->info['draws']['recursive'] as $draw) {
-            array_map(function($f) use ($draw) {
-                if(!in_array($f, array_keys($draw))) {
-                    throw new PromoConfigurationException('Recursive draws config is not valid');
-                }
+        if(!empty($this->info['draws']['recursive'])) {
+            foreach ($this->info['draws']['recursive'] as $draw) {
+                array_map(function($f) use ($draw) {
+                    if(!in_array($f, array_keys($draw))) {
+                        throw new PromoConfigurationException('Recursive draws config is not valid');
+                    }
 
-            }, [ 'title', 'repeat', 'winners_num', 'runnerups_num' ] );
+                }, [ 'title', 'repeat', 'winners_num', 'runnerups_num' ] );
+            }
         }
 
-        foreach ($this->info['draws']['adhoc'] as $draw) {
-            array_map(function($f) use ($draw) {
-                if(!in_array($f, array_keys($draw))) {
-                    throw new PromoConfigurationException('Adhoc draws config is not valid');
-                }
-            }, [ 'title', 'winners_num', 'runnerups_num' ] );
+        if(!empty($this->info['draws']['adhoc'])) {
+            foreach ($this->info['draws']['adhoc'] as $draw) {
+                array_map(function ($f) use ($draw) {
+                    if (!in_array($f, array_keys($draw))) {
+                        throw new PromoConfigurationException('Adhoc draws config is not valid');
+                    }
+                }, ['title', 'winners_num', 'runnerups_num']);
+            }
+        }
+
+        if(!empty($this->info['draws']['instant'])) {
+            foreach ($this->info['draws']['instant'] as $draw) {
+                array_map(function ($f) use ($draw) {
+                    if (!in_array($f, array_keys($draw))) {
+                        throw new PromoConfigurationException('Instant draws config is not valid');
+                    }
+                }, [
+                    'title',
+
+                    'time_start',
+                    'time_end',
+
+                    'distribution',
+                    'max_daily_wins',
+
+                    'limit_presents_by',
+
+                ] );
+            }
         }
 
     }
@@ -175,7 +203,11 @@ class Promo {
 
         $this->validateDrawsConfig();
 
-        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'] )
+        return collect(
+            (!empty($this->info['draws']['recursive']) ? $this->info['draws']['recursive'] : [])
+            + (!empty($this->info['draws']['adhoc']) ? $this->info['draws']['adhoc'] : [])
+            + (!empty($this->info['draws']['instant']) ? $this->info['draws']['instant'] : [])
+        )
             ->mapWithKeys(function ($type, $key ) {
             return [ $key => $type['title'] ];
         })->toArray();
@@ -211,10 +243,12 @@ class Promo {
 
         $this->validateDrawsConfig();
 
-        if (!empty($this->info['draws']['instant'])) {
-            return collect($this->info['draws']['instant']);
-        }
-        return null;
+        return collect(!empty($this->info['draws']['instant']) ? $this->info['draws']['instant'] : []);
+
+//        if (!empty($this->info['draws']['instant'])) {
+//            return collect($this->info['draws']['instant']);
+//        }
+//        return null;
     }
 
     /**

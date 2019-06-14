@@ -24,6 +24,8 @@ class Stats {
 
             if( $index != 'current' && !empty($promoInfo['participation_stats_table']) ) {
 
+                config([ 'under-the-cap.current' => config('under-the-cap.'.$index) ]);
+
                 $stats = ParticipationsDay::orderBy('date', 'ASC')->get();
 
                 $result[] = [
@@ -45,14 +47,14 @@ class Stats {
 
                 $result[] = [
                     'type' => 'number-tile',
-                    'title' => 'Participations total',
+                    'title' => $promoInfo['name'].' - Participations total',
                     'number' => Participation::count(),
                     'url' => 'utc/participations/exohi',
                 ];
 
                 $result[] = [
                     'type' => 'number-tile',
-                    'title' => 'Participations today',
+                    'title' => $promoInfo['name'].' - Participations today',
                     'number' => Participation::whereDate('created_at', date('Y-m-d', time()))->count(),
                     'url' => 'utc/participations/exohi',
                 ];
