@@ -95,6 +95,7 @@ class ParticipationsController extends Controller {
                         $participation->win()->create([
                             'type_id' => $id,
                             'present_id' => $win['id'],
+                            'confirmed' => (!empty($info['auto_approved']) &&  $info['auto_approved'] === true) ? 1 : 0
                         ]);
                     }
 

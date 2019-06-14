@@ -31,10 +31,10 @@ class InstantWinDraw
             if( !empty($draw) ) {
                 if( !empty($draw['mailable']) ) {
 
-//                    \Mail::to(
-//                        \App::environment('production') ? '': 'kostas.tourvas@mrm-mccann.gr'
-//                    )
-//                        ->send(new $draw['mailable']($event->participation));
+                    \Mail::to(
+                        \App::environment('production') ? $event->participation->email : 'kostas.tourvas@mrm-mccann.gr'
+                    )
+                        ->send(new $draw['mailable']($event->participation));
 
                 }
             }
