@@ -4,6 +4,7 @@ namespace UnderTheCap\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use UnderTheCap\Entities\Present;
 use UnderTheCap\Exceptions\PromoConfigurationException;
 use UnderTheCap\Participation;
 use UnderTheCap\Promo;
@@ -70,6 +71,10 @@ class WinsController extends Controller {
 
             }
 
+            if( !empty( $draw['associate_presents'] ) && $draw['associate_presents'] ) {
+                $this->assignPresents($draw);
+            }
+
         }
 
 //        if( !empty( $promo ) ) {
@@ -101,6 +106,37 @@ class WinsController extends Controller {
     }
 
     /**
+     * Assign available presents to winners.
+     * @param $draw
+     */
+    private function assignPresents( $draw ) {
+
+        $presents = Present::
+            where( 'total_give', '>', \DB::raw('total_given'))
+            ->where( 'draw_id', $draw['id'] )
+            ->get()
+        ;
+
+        foreach( $presents as $present ) {
+            $assign = Win::where( 'type_id', $draw['id'] )
+                ->where('runnerup', 0)
+                ->whereDoesntHave('present')
+                ->inRandomOrder()
+                ->limit( ($present->total_give - $present->total_given) )
+                ->update([
+                    'present_id' => $present->id
+                ]);
+
+            if($assign > 0) {
+                $present->update([
+                    'total_given' => ( $present->total_given + $assign )
+                ]);
+            }
+        }
+
+    }
+
+    /**
      * @param $info The information regarding the draw
      * @param $number The number of wins to be drawn
      * @param bool $runnerups Whether to draw of wins or runner ups
@@ -110,12 +146,17 @@ class WinsController extends Controller {
 
         $wins = $this->pullWins($info);
 
+//        dd($wins);
+
         $existing = $wins->filter(function ($participation, $key) use ($runnerups) {
-            echo $participation->win->first()->runnerup;
+
+//            dd($participation->win()->first());
+//            echo $participation->win->first()->runnerup;
+
             if($runnerups) {
-                return $participation->win->first()->runnerup == 1;
+                return $participation->win()->first()->runnerup == 1;
             }
-            return $participation->win->first()->runnerup == 0;
+            return $participation->win()->first()->runnerup == 0;
         });
 
         if( ($number - $existing->count()) > 0) {
