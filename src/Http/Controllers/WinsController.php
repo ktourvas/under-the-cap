@@ -266,6 +266,7 @@ class WinsController extends Controller {
         $labels[] = 'created at';
         $labels[] = 'Τύπος Νίκης';
         $labels[] = 'Ημερομηνία Νίκης';
+        $labels[] = 'Δώρο';
         $labels[] = 'Approved';
         $labels[] = 'Upgraded';
         $labels[] = 'Ημ./Ώρα Δημιουργίας Νίκης';
@@ -283,6 +284,9 @@ class WinsController extends Controller {
 
             $line['WinType'] = $win->type_name;
             $line['WinAssociatedDate'] = $win->associated_date;
+
+            $line['WinPresent'] = !empty($win->present) ? $win->present->title : 'n/a';
+
             $line['Confirmed'] = $win->confirmed;
             $line['Bumped'] = $win->bumped;
             $line['Wincreated_at'] = $win->created_at;
