@@ -24,27 +24,18 @@ class InstantWinDraw
      */
     public function handle(ParticipationSubmitted $event)
     {
-        if($event->participation->win()->exists()) {
-
-            $draw = $event->participation->promo->draw($event->participation->win[0]->type_id);
-
-            if( !empty($draw) ) {
-                if( !empty($draw['mailable']) ) {
-
-                    \Mail::to(
-                        \App::environment('production') ? $event->participation->email : 'kostas.tourvas@mrm-mccann.gr'
-                    )
-                        ->send(new $draw['mailable']($event->participation));
-
+        if( $event->participation->promo->instantDraws()->count() > 0 ) {
+            if($event->participation->win()->exists()) {
+                $draw = $event->participation->promo->draw($event->participation->win[0]->type_id);
+                if( !empty($draw) ) {
+                    if( !empty($draw['mailable']) ) {
+                        \Mail::to(
+                            \App::environment('production') ? $event->participation->email : 'kostas.tourvas@mrm-mccann.gr'
+                        )
+                            ->send(new $draw['mailable']($event->participation));
+                    }
                 }
             }
-
-
-//            dd($event->participation->promo->draw($event->participation->win[0]->type_id));
-//            if(!empty())
-
         }
-        // Access the order using $event->order...
-
     }
 }
