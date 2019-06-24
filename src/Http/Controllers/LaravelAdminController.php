@@ -52,7 +52,7 @@ class LaravelAdminController extends Controller {
                     ->orderBy('created_at', 'desc')
                     ->orderBy('associated_date', 'desc')
 
-                    ->orderBy('runnerup', 'desc')
+                    ->orderBy('runnerup', 'asc')
 
                     ->get(),
 //            'promo' => $promo,

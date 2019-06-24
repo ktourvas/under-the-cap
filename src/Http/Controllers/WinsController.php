@@ -146,17 +146,13 @@ class WinsController extends Controller {
 
         $wins = $this->pullWins($info);
 
-//        dd($wins);
-
         $existing = $wins->filter(function ($participation, $key) use ($runnerups) {
-
-//            dd($participation->win()->first());
-//            echo $participation->win->first()->runnerup;
 
             if($runnerups) {
                 return $participation->win()->first()->runnerup == 1;
             }
             return $participation->win()->first()->runnerup == 0;
+
         });
 
         if( ($number - $existing->count()) > 0) {
@@ -170,6 +166,8 @@ class WinsController extends Controller {
             $new = $this->drawSqlAddExtras($new, $info);
 
             $new->inRandomOrder()->limit( ($number - $existing->count()) );
+
+//            dd($new->toSql());
 
             $new = $new->get();
 
@@ -202,13 +200,20 @@ class WinsController extends Controller {
     private function drawSqlAddExcludes($q, $info, $wins) {
         if( !empty($info['restrict']) ) {
 
-            if($wins->count() > 0) {
+            $q->select('id');
 
-                foreach ($info['restrict'] as $column) {
+            foreach ($info['restrict'] as $column) {
+
+                $q->addSelect($column);
+
+                if($wins->count() > 0) {
+
                     $excludes = $wins->map(function ($participation) use ($column) {
                         return $participation[$column];
                     })->toArray();
+
                     $q->whereNotIn($column, $excludes);
+
                 }
 
             }
