@@ -47,12 +47,13 @@ class LaravelAdminController extends Controller {
             'participations' =>
                 Win::
                     with('participation')
+
                     ->orderBy('type_id', 'desc')
+
+                    ->orderBy('runnerup', 'asc')
 
                     ->orderBy('created_at', 'desc')
                     ->orderBy('associated_date', 'desc')
-
-                    ->orderBy('runnerup', 'asc')
 
                     ->get(),
 //            'promo' => $promo,
