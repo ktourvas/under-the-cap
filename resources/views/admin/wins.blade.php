@@ -4,8 +4,16 @@
 
     <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
-            <li><a href="{{ config('laravel-admin.root_url') }}">Dashboard</a></li>
-            <li><a href="{{ config('laravel-admin.root_url') }}/utc/wins/{{ $promo->slug() }}">Draws - {{ $promo->title() }}</a></li>
+            <li>
+                <a href="{{ config('laravel-admin.root_url') }}">
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{{ config('laravel-admin.root_url') }}/utc/wins/{{ $promo->slug() }}">
+                    Draws - {{ $promo->title() }}
+                </a>
+            </li>
         </ul>
     </nav>
 
@@ -13,14 +21,14 @@
 
         <div class="navbar-item">
 
-            <f-post inline-template action="/api/utc/draws/{{ $promo->slug() }}" draw="{{ array_keys($promo->adhocDraws())[0] }}">
+            <f-post inline-template action="/api/utc/draws/{{ $promo->slug() }}">
 
                 <div class="field has-addons has-addons-centered">
                     <p class="control">
                         <span class="select">
                             <select v-model="added.draw">
                                 @foreach($promo->adhocDraws() as $key => $draw)
-                                    <option value="{{ $key }}">{{ $draw }}</option>
+                                    <option value="{{ $key }}">{{ $draw['title'] }}</option>
                                 @endforeach
                             </select>
                         </span>
@@ -46,16 +54,6 @@
 
             <div class="navbar-item">
 
-                {{--<f-download inline-template action="/api/utc/participations/{{ $promo }}/download">--}}
-                    {{--<a class="navbar-item" @click.prevent="onSubmit">--}}
-                        {{--<a class="navbar-item" onclick="event.preventDefault();document.getElementById('download-form').submit();">--}}
-                        {{--Download--}}
-                        {{--<form id="download-form" action="/api/utc/participations/{{ $promo }}/download" method="POST" style="display: none;">--}}
-                        {{--@csrf--}}
-                        {{--</form>--}}
-                    {{--</a>--}}
-                {{--</f-download>--}}
-
                 <f-download inline-template action="/api/utc/draws/{{ $promo->slug() }}/download">
                     <button class="button" @click="onSubmit">
                         <span>Download</span>
@@ -77,7 +75,6 @@
             <tr>
 
                 <th><abbr title="Position">ID (Local)</abbr></th>
-{{--                <th>Redemption Code</th>--}}
 
                 @foreach(config('under-the-cap.current.participation_fields') as $field)
                     <th>{{ $field['title'] }}</th>
@@ -96,6 +93,7 @@
 
             </tr>
             </thead>
+
             @foreach($participations as $index => $win)
 
                 @if($index == 0 || $win->associated_date !== $participations[$index-1]->associated_date)
@@ -108,29 +106,33 @@
 
                 @endif
 
-
                 <tr id="part{{ $win->id }}">
 
-                    <th>{{ $win->participation->id }}</th>
+                    <th>
+                        {{ $win->participation->id }}
+                    </th>
 
-                    @foreach(config('under-the-cap.current.participation_fields') as $field => $info )
+                    @foreach( $promo->participationFields() as $key => $field )
 
-                        @if(!empty($info['is_id']))
-                            <td>{{ $win->participation->getDynamicField($field) }}</td>
-                        @elseif(!empty($info['relation']))
-                            <td>{{ $win->participation[$info['relation'][0]][$info['relation'][1]] }}</td>
+                        @if(!empty($field['is_id']))
+                            <td>
+                                {{ $win->participation->getDynamicField($key) }}
+                            </td>
+                        @elseif(!empty($field['relation']))
+                            <td>
+                                {{ $win->participation[$field['relation'][0]][$field['relation'][1]] }}
+                            </td>
                         @else
-                            <td>{{ $win->participation[$field] }}</td>
+                            <td>
+                                {{ $win->participation[$key] }}
+                            </td>
                         @endif
 
                     @endforeach
 
                     <td>{{ $win->participation->created_at }}</td>
-
                     <td>{{ $win->draw_name }}</td>
                     <td>{{ $win->type_name }}</td>
-
-
 
                     <td>
                         @if($win->present()->exists())
@@ -192,17 +194,6 @@
                                 </div>
                             </div>
                         </div>
-                        {{--<f-delete inline-template del-item="part{{ $win->id }}" action="/api/utc/draws/{{ $promo->slug() }}/{{ $win->id }}">--}}
-                            {{--<form method="post" class="f-delete confirm" @submit.prevent="onSubmit">--}}
-                                {{--<input type="hidden" name="_method" value="delete">--}}
-                                {{--<button class="button is-danger is-small">--}}
-                                    {{--<span>Delete</span>--}}
-                                    {{--<span class="icon is-small">--}}
-                                        {{--<i class="fas fa-times"></i>--}}
-                                    {{--</span>--}}
-                                {{--</button>--}}
-                            {{--</form>--}}
-                        {{--</f-delete>--}}
                     </td>
                 </tr>
             @endforeach

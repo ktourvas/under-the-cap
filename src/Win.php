@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\App;
 
 class Win extends Model {
 
-    protected $types, $promo, $draws;
+    protected $types, $promo, $draw;
 
     protected $fillable = [ 'type_id', 'participation_id', 'bumped', 'associated_date', 'confirmed', 'runnerup', 'present_id' ];
 
@@ -17,9 +17,7 @@ class Win extends Model {
         $this->table = config('under-the-cap.current.wins_table');
 
         $this->promo = App::make('UnderTheCap\Promo');
-        $this->draws = $this->promo->draws();
 
-//        $this->types = config('under-the-cap.current.win_types');
         parent::__construct($attributes);
     }
 
@@ -41,7 +39,7 @@ class Win extends Model {
      * The Win associated draw name
      */
     public function getDrawNameAttribute() {
-        return !empty($this->draws[$this->type_id]) ? $this->draws[$this->type_id] : 'n/a';
+        return !empty( $this->promo->draw($this->type_id) ) ? $this->promo->draw($this->type_id)['title'] : 'not set';
     }
 
     /**

@@ -84,7 +84,7 @@ class Promo {
      * @return array
      */
     public function participationFieldKeys() {
-        return array_keys($this->participation_fields->toArray());
+        return array_keys( $this->participation_fields->toArray() );
     }
 
     /**
@@ -148,47 +148,48 @@ class Promo {
 
     public function validateDrawsConfig() {
 
-        if(!empty($this->info['draws']['recursive'])) {
-            foreach ($this->info['draws']['recursive'] as $draw) {
-                array_map(function($f) use ($draw) {
-                    if(!in_array($f, array_keys($draw))) {
-                        throw new PromoConfigurationException('Recursive draws config is not valid');
-                    }
-
-                }, [ 'title', 'repeat', 'winners_num', 'runnerups_num' ] );
-            }
-        }
-
-        if(!empty($this->info['draws']['adhoc'])) {
-            foreach ($this->info['draws']['adhoc'] as $draw) {
-                array_map(function ($f) use ($draw) {
-                    if (!in_array($f, array_keys($draw))) {
-                        throw new PromoConfigurationException('Adhoc draws config is not valid');
-                    }
-                }, ['title', 'winners_num', 'runnerups_num']);
-            }
-        }
-
-        if(!empty($this->info['draws']['instant'])) {
-            foreach ($this->info['draws']['instant'] as $draw) {
-                array_map(function ($f) use ($draw) {
-                    if (!in_array($f, array_keys($draw))) {
-                        throw new PromoConfigurationException('Instant draws config is not valid');
-                    }
-                }, [
-                    'title',
-
-                    'time_start',
-                    'time_end',
-
-                    'distribution',
-                    'max_daily_wins',
-
-                    'limit_presents_by',
-
-                ] );
-            }
-        }
+        //TODO: refactor for new config format
+//        if(!empty($this->info['draws']['recursive'])) {
+//            foreach ($this->info['draws']['recursive'] as $draw) {
+//                array_map(function($f) use ($draw) {
+//                    if(!in_array($f, array_keys($draw))) {
+//                        throw new PromoConfigurationException('Recursive draws config is not valid');
+//                    }
+//
+//                }, [ 'title', 'repeat', 'winners_num', 'runnerups_num' ] );
+//            }
+//        }
+//
+//        if(!empty($this->info['draws']['adhoc'])) {
+//            foreach ($this->info['draws']['adhoc'] as $draw) {
+//                array_map(function ($f) use ($draw) {
+//                    if (!in_array($f, array_keys($draw))) {
+//                        throw new PromoConfigurationException('Adhoc draws config is not valid');
+//                    }
+//                }, ['title', 'winners_num', 'runnerups_num']);
+//            }
+//        }
+//
+//        if(!empty($this->info['draws']['instant'])) {
+//            foreach ($this->info['draws']['instant'] as $draw) {
+//                array_map(function ($f) use ($draw) {
+//                    if (!in_array($f, array_keys($draw))) {
+//                        throw new PromoConfigurationException('Instant draws config is not valid');
+//                    }
+//                }, [
+//                    'title',
+//
+//                    'time_start',
+//                    'time_end',
+//
+//                    'distribution',
+//                    'max_daily_wins',
+//
+//                    'limit_presents_by',
+//
+//                ] );
+//            }
+//        }
 
     }
 
@@ -203,14 +204,21 @@ class Promo {
 
         $this->validateDrawsConfig();
 
+//        return collect(
+//            (!empty($this->info['draws']['recursive']) ? $this->info['draws']['recursive'] : [])
+//            + (!empty($this->info['draws']['adhoc']) ? $this->info['draws']['adhoc'] : [])
+//            + (!empty($this->info['draws']['instant']) ? $this->info['draws']['instant'] : [])
+//        )
+//            ->mapWithKeys(function ($type, $key ) {
+//            return [ $key => $type['title'] ];
+//        })->toArray();
+
         return collect(
-            (!empty($this->info['draws']['recursive']) ? $this->info['draws']['recursive'] : [])
-            + (!empty($this->info['draws']['adhoc']) ? $this->info['draws']['adhoc'] : [])
-            + (!empty($this->info['draws']['instant']) ? $this->info['draws']['instant'] : [])
-        )
-            ->mapWithKeys(function ($type, $key ) {
-            return [ $key => $type['title'] ];
-        })->toArray();
+            (!empty($this->info['draws']) ? $this->info['draws'] : [])
+        );
+//            ->mapWithKeys(function ($draw, $key ) {
+//                return [ $key => $draw['title'] ];
+//            })->toArray();
 
     }
 
@@ -225,10 +233,18 @@ class Promo {
 
         $this->validateDrawsConfig();
 
-        return collect($this->info['draws']['adhoc'])
-            ->mapWithKeys(function ($type, $key ) {
-                return [ $key => $type['title'] ];
-            })->toArray();
+//        return collect($this->info['draws']['adhoc'])
+//            ->mapWithKeys(function ($type, $key ) {
+//                return [ $key => $type['title'] ];
+//            })->toArray();
+
+        return collect($this->info['draws'])
+            ->reject(function($draw) {
+                return $draw['type'] !== 'adhoc';
+            });
+//            ->mapWithKeys(function ($type, $key ) {
+//                return [ $key => $type['title'] ];
+//            })->toArray();
 
     }
 
@@ -243,7 +259,13 @@ class Promo {
 
         $this->validateDrawsConfig();
 
-        return collect(!empty($this->info['draws']['instant']) ? $this->info['draws']['instant'] : []);
+        return collect($this->info['draws'])
+            ->reject(function($draw) {
+                return $draw['type'] !== 'instant';
+            });
+
+
+//        return collect(!empty($this->info['draws']['instant']) ? $this->info['draws']['instant'] : []);
 
 //        if (!empty($this->info['draws']['instant'])) {
 //            return collect($this->info['draws']['instant']);
@@ -262,11 +284,14 @@ class Promo {
 
         $this->validateDrawsConfig();
 
-        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'] + $this->info['draws']['instant'])
-            ->filter(function ( $type, $key ) use ($id) {
+//        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'] + $this->info['draws']['instant'])
+//            ->filter(function ( $type, $key ) use ($id) {
+//                return $key == $id;
+//            })->first();
+        return collect( $this->info['draws'] )
+            ->filter(function ( $draw, $key ) use ($id) {
                 return $key == $id;
             })->first();
-
     }
 
     /**
@@ -274,11 +299,11 @@ class Promo {
      *
      * @return array
      */
-    public function winTypes() {
-        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'])->mapWithKeys(function ($type, $key ) {
-            return [ $key => $type['title'] ];
-        })->toArray();
-    }
+//    public function winTypes() {
+//        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'])->mapWithKeys(function ($type, $key ) {
+//            return [ $key => $type['title'] ];
+//        })->toArray();
+//    }
 
     /**
      * The wins types used by the main draw process
