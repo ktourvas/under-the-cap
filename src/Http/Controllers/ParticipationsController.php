@@ -86,9 +86,15 @@ class ParticipationsController extends Controller {
             $instant = new InstantWinsManager();
             foreach( $this->promo->instantDraws() as $id => $info ) {
 
-                if(Participation::whereHas('win', function($q) use ($id) {
+                if(
+                    Participation::whereHas('win', function($q) use ($id) {
                         $q->where('type_id', $id);
-                })->where('email', $participation->email)->count() == 0) {
+                    })
+                        ->where(function($q) use ($participation) {
+                            $q->where('email', $participation->email)
+                                ->orWhere('tel', $participation->tel);
+                        })
+                        ->count() == 0) {
 
                     $win = $instant($id, $info);
                     if( $win !== false) {
