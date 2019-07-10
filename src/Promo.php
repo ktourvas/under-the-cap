@@ -94,11 +94,11 @@ class Promo {
      * @return Collection
      */
     public function ParticipationSearchables() {
-        return collect(config('under-the-cap.current.participation_fields'))->map(function($field) {
-            return $field;
-        })->reject(function ($field) {
-            return empty($field['is_searchable']);
+
+        return collect(config('under-the-cap.current.participation_fields'))->filter(function ($field, $key) {
+            return !empty($field['is_searchable']);
         });
+
     }
 
     /**
@@ -140,7 +140,7 @@ class Promo {
 
     /**
      * Validates the available draws configuration info against the minimum required item fields. In case of a missing
-     * directive an exception is thrown.
+     * info bit, an exception is thrown.
      *
      * @return null
      * @throws PromoConfigurationException
@@ -148,48 +148,42 @@ class Promo {
 
     public function validateDrawsConfig() {
 
-        //TODO: refactor for new config format
-//        if(!empty($this->info['draws']['recursive'])) {
-//            foreach ($this->info['draws']['recursive'] as $draw) {
-//                array_map(function($f) use ($draw) {
-//                    if(!in_array($f, array_keys($draw))) {
-//                        throw new PromoConfigurationException('Recursive draws config is not valid');
-//                    }
-//
-//                }, [ 'title', 'repeat', 'winners_num', 'runnerups_num' ] );
-//            }
-//        }
-//
-//        if(!empty($this->info['draws']['adhoc'])) {
-//            foreach ($this->info['draws']['adhoc'] as $draw) {
-//                array_map(function ($f) use ($draw) {
-//                    if (!in_array($f, array_keys($draw))) {
-//                        throw new PromoConfigurationException('Adhoc draws config is not valid');
-//                    }
-//                }, ['title', 'winners_num', 'runnerups_num']);
-//            }
-//        }
-//
-//        if(!empty($this->info['draws']['instant'])) {
-//            foreach ($this->info['draws']['instant'] as $draw) {
-//                array_map(function ($f) use ($draw) {
-//                    if (!in_array($f, array_keys($draw))) {
-//                        throw new PromoConfigurationException('Instant draws config is not valid');
-//                    }
-//                }, [
-//                    'title',
-//
-//                    'time_start',
-//                    'time_end',
-//
-//                    'distribution',
-//                    'max_daily_wins',
-//
-//                    'limit_presents_by',
-//
-//                ] );
-//            }
-//        }
+        //TODO: refactor fields array to compare against depending on type
+
+        if(!empty($this->info['draws'])) {
+
+            collect($this->info['draws'])
+
+                /**
+                 * deprecated: to be removed in later versions
+                 */
+                ->reject(function($draw, $key) {
+                    return in_array($key , [
+                        'adhoc',
+                        'instant',
+                        'recursive'
+                    ]);
+                })
+
+                ->map(function($draw, $key) {
+
+                    array_map(function($f) use ($draw) {
+                        if(!in_array($f, array_keys($draw))) {
+                            throw new PromoConfigurationException('Draws config is not valid');
+                        }
+
+                    }, [
+                        'title',
+                        'type',
+//                        'winners_num'
+                    ]
+
+
+                    );
+
+                });
+
+        }
 
     }
 
@@ -197,28 +191,16 @@ class Promo {
      * The draws associated with the promo. A validation of the available conf is performed before returning
      * the information array
      *
-     * @return array
+     * @return \Illuminate\Support\Collection
      * @throws PromoConfigurationException
      */
     public function draws() {
 
         $this->validateDrawsConfig();
 
-//        return collect(
-//            (!empty($this->info['draws']['recursive']) ? $this->info['draws']['recursive'] : [])
-//            + (!empty($this->info['draws']['adhoc']) ? $this->info['draws']['adhoc'] : [])
-//            + (!empty($this->info['draws']['instant']) ? $this->info['draws']['instant'] : [])
-//        )
-//            ->mapWithKeys(function ($type, $key ) {
-//            return [ $key => $type['title'] ];
-//        })->toArray();
-
         return collect(
             (!empty($this->info['draws']) ? $this->info['draws'] : [])
         );
-//            ->mapWithKeys(function ($draw, $key ) {
-//                return [ $key => $draw['title'] ];
-//            })->toArray();
 
     }
 
@@ -226,33 +208,26 @@ class Promo {
      * The draws associated with the promo which are considered adhoc. Adhoc draws are presented as options for
      * manually requesting a draw by admins.
      *
-     * @return array
+     * @return \Illuminate\Support\Collection
      * @throws PromoConfigurationException
      */
     public function adhocDraws() {
 
         $this->validateDrawsConfig();
 
-//        return collect($this->info['draws']['adhoc'])
-//            ->mapWithKeys(function ($type, $key ) {
-//                return [ $key => $type['title'] ];
-//            })->toArray();
-
         return collect($this->info['draws'])
             ->reject(function($draw) {
-                return $draw['type'] !== 'adhoc';
+                return empty($draw['type']) || $draw['type'] !== 'adhoc';
             });
-//            ->mapWithKeys(function ($type, $key ) {
-//                return [ $key => $type['title'] ];
-//            })->toArray();
 
     }
 
     /**
-     * The draws associated with the promo which are considered adhoc. Adhoc draws are presented as options for
-     * manually requesting a draw by admins.
      *
-     * @return array
+     * The draws associated with the promo which are assigned instantly. If a draw is of type instant, it will trigger
+     * an instant win request after a participation submission.
+     *
+     * @return \Illuminate\Support\Collection
      * @throws PromoConfigurationException
      */
     public function instantDraws() {
@@ -261,64 +236,27 @@ class Promo {
 
         return collect($this->info['draws'])
             ->reject(function($draw) {
-                return $draw['type'] !== 'instant';
+                return empty($draw['type']) || $draw['type'] !== 'instant';
             });
 
-
-//        return collect(!empty($this->info['draws']['instant']) ? $this->info['draws']['instant'] : []);
-
-//        if (!empty($this->info['draws']['instant'])) {
-//            return collect($this->info['draws']['instant']);
-//        }
-//        return null;
     }
 
     /**
-     * The draws associated with the promo which are considered adhoc. Adhoc draws are presented as options for
-     * manually requesting a draw by admins.
      *
-     * @return array
+     * Get information of a draw, by id.
+     *
+     * @return \Illuminate\Support\Collection
      * @throws PromoConfigurationException
      */
     public function draw($id) {
 
         $this->validateDrawsConfig();
 
-//        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'] + $this->info['draws']['instant'])
-//            ->filter(function ( $type, $key ) use ($id) {
-//                return $key == $id;
-//            })->first();
         return collect( $this->info['draws'] )
             ->filter(function ( $draw, $key ) use ($id) {
                 return $key == $id;
             })->first();
     }
-
-    /**
-     * The types of wins associated with the promo
-     *
-     * @return array
-     */
-//    public function winTypes() {
-//        return collect($this->info['draws']['recursive'] + $this->info['draws']['adhoc'])->mapWithKeys(function ($type, $key ) {
-//            return [ $key => $type['title'] ];
-//        })->toArray();
-//    }
-
-    /**
-     * The wins types used by the main draw process
-     *
-     * @return array
-     */
-//    public function drawableWinTypes() {
-//
-//        return collect($this->info['win_types'])->map(function($type) {
-//            return $type;
-//        })->reject(function ($type) {
-//            return empty($type['drawable']);
-//        });
-//
-//    }
 
     public function info() {
         return $this->info;

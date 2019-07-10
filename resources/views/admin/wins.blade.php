@@ -19,36 +19,39 @@
 
     <nav class="navbar" role="navigation" aria-label="main navigation">
 
-        <div class="navbar-item">
+        @if($promo->adhocDraws()->count())
 
-            <f-post inline-template action="/api/utc/draws/{{ $promo->slug() }}">
+            <div class="navbar-item">
 
-                <div class="field has-addons has-addons-centered">
-                    <p class="control">
-                        <span class="select">
-                            <select v-model="added.draw">
-                                @foreach($promo->adhocDraws() as $key => $draw)
-                                    <option value="{{ $key }}">{{ $draw['title'] }}</option>
-                                @endforeach
-                            </select>
-                        </span>
-                    </p>
-                    <p class="control">
-                        <button class="button is-success" @click="onSubmit" :disabled="sending">
-                            <span class="icon is-small" v-if="sending">
-                                <i class="fas fa-spinner fa-spin"></i>
+                <f-post inline-template action="/api/utc/draws/{{ $promo->slug() }}">
+
+                    <div class="field has-addons has-addons-centered">
+                        <p class="control">
+                            <span class="select">
+                                <select v-model="added.draw">
+                                    @foreach($promo->adhocDraws() as $key => $draw)
+                                        <option value="{{ $key }}">{{ $draw['title'] }}</option>
+                                    @endforeach
+                                </select>
                             </span>
-                            <span>Κλήρωση</span>
-                            <span class="icon is-small">
-                                <i class="fas fa-random"></i>
-                            </span>
-                        </button>
-                    </p>
-                </div>
+                        </p>
+                        <p class="control">
+                            <button class="button is-success" @click="onSubmit" :disabled="sending">
+                                <span class="icon is-small" v-if="sending">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </span>
+                                <span>Κλήρωση</span>
+                                <span class="icon is-small">
+                                    <i class="fas fa-random"></i>
+                                </span>
+                            </button>
+                        </p>
+                    </div>
 
-            </f-post>
+                </f-post>
 
-        </div>
+            </div>
+        @endif
 
         @if($participations->count())
 
