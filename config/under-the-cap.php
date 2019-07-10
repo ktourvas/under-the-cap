@@ -163,76 +163,104 @@ return [
 
         'draws' => [
 
-            'recursive' => [
-                1 => [
-                    'title' => 'Daily Winner',
-                    'repeat' => 'daily',
-                    'winners_num' => 1,
-                    'runnerups_num' => 2,
-                    'group' => 'date'
-                ]
-            ],
+            1 => [
 
-            'adhoc' => [
-                2 => [
-                    'title' => 'final winner',
-                    'winners_num' => 3,
-                    'runnerups_num' => 2,
-                    'associate_participation_column' => [
-                        'column' => 'choice',
-                        'values' => [
-                            1, 2, 3
-                        ]
+                'title' => 'the draw label title',
+
+                'type' => '', //adhoc, repeated, instant
+
+                // type: repeat
+                'repeat' => 'daily', //daily
+
+                //type: repeat, adhoc
+                'winners_num' => 1,
+                'runnerups_num' => 2,
+
+                'associate_participation_column' => [
+                    'column' => 'choice',
+                    'values' => [
+                        1, 2, 3
                     ]
-                ]
+                ],
+
+                // type: instant
+                'time_start' => '00:00:00',
+                'time_end' => '23:59:00',
+                'max_winners' => 5,
+
+                //presents
+                'limit_presents_by' => 'totals', //totals, daily
+
+                'mailable' => 'mrm\cc3e\amitamotion\Mail\InstantWin',
+                'auto_approved' => true
+
             ],
 
-            'instant' => [
-                3 => [
 
-                    'title' => 'Instant Winner 1',
-                    'time_start' => '00:00:00',
-                    'time_end' => '23:59:00',
-                    'distribution' => 5,
-
-                    'max_winners' => 5,
-                    'limit_presents_by' => 'totals', //totals, daily
-
-                    'presents' => [
-                        [
-                            'id' => 'p1',
-                            'title' => 'this is the present 1',
-                            'total' => 35,
-                            'daily_count' => 1
-                        ],
-                        [
-                            'id' => 'p2',
-                            'title' => 'this is the present 2',
-                            'total' => 40,
-                            'daily_count' => 1
-                        ],
-                        [
-                            'id' => 'p3',
-                            'title' => 'this is the present 3',
-                            'total' => 45,
-                            'daily_count' => 1
-                        ],
-                        [
-                            'id' => 'p4',
-                            'title' => 'this is the present 4',
-                            'total' => 105,
-                            'daily_count' => 2
-                        ],
-                    ],
-
-
+//            'recursive' => [
+//                1 => [
 //                    'title' => 'Daily Winner',
 //                    'repeat' => 'daily',
 //                    'winners_num' => 1,
 //                    'runnerups_num' => 2,
 //                    'group' => 'date'
-                ]
-            ],
+//                ]
+//            ],
+//
+//            'adhoc' => [
+//                2 => [
+//                    'title' => 'final winner',
+//                    'winners_num' => 3,
+//                    'runnerups_num' => 2,
+//                    'associate_participation_column' => [
+//                        'column' => 'choice',
+//                        'values' => [
+//                            1, 2, 3
+//                        ]
+//                    ]
+//                ]
+//            ],
+//
+//            'instant' => [
+//                3 => [
+//
+//                    'title' => 'Instant Winner 1',
+//                    'time_start' => '00:00:00',
+//                    'time_end' => '23:59:00',
+//                    'distribution' => 5,
+//
+//                    'max_winners' => 5,
+//                    'limit_presents_by' => 'totals', //totals, daily
+//
+//                    'presents' => [
+//                        [
+//                            'id' => 'p1',
+//                            'title' => 'this is the present 1',
+//                            'total' => 35,
+//                            'daily_count' => 1
+//                        ],
+//                        [
+//                            'id' => 'p2',
+//                            'title' => 'this is the present 2',
+//                            'total' => 40,
+//                            'daily_count' => 1
+//                        ],
+//                        [
+//                            'id' => 'p3',
+//                            'title' => 'this is the present 3',
+//                            'total' => 45,
+//                            'daily_count' => 1
+//                        ],
+//                        [
+//                            'id' => 'p4',
+//                            'title' => 'this is the present 4',
+//                            'total' => 105,
+//                            'daily_count' => 2
+//                        ],
+//                    ],
+//
+//                ]
+//            ],
 
         ]
     ]
