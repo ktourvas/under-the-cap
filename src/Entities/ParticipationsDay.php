@@ -5,6 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ParticipationsDay extends Model {
 
+    protected $promo;
+
     protected $fillable = [ 'date', 'total' ];
 
     public function __construct(array $attributes = [])

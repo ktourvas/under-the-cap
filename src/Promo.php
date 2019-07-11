@@ -24,7 +24,8 @@ class Promo {
         $this->info['start_date'] = strtotime($this->info['start_date']);
         $this->info['end_date'] = strtotime($this->info['end_date']);
 
-        $this->participation_fields = collect(config('under-the-cap.current.participation_fields'));
+        $this->participation_fields = collect($this->info['participation_fields']);
+//        $this->participation_fields = collect(config('under-the-cap.current.participation_fields'));
     }
 
     /**
@@ -95,9 +96,13 @@ class Promo {
      */
     public function ParticipationSearchables() {
 
-        return collect(config('under-the-cap.current.participation_fields'))->filter(function ($field, $key) {
+        return collect($this->info['under-the-cap.current.participation_fields'])->filter(function ($field, $key) {
             return !empty($field['is_searchable']);
         });
+
+//        return collect(config('under-the-cap.current.participation_fields'))->filter(function ($field, $key) {
+//            return !empty($field['is_searchable']);
+//        });
 
     }
 
