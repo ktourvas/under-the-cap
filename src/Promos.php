@@ -4,7 +4,7 @@ namespace UnderTheCap;
 
 class Promos {
 
-    private $promos;
+    private $promos, $current;
 
     public function __construct()
     {
@@ -15,6 +15,14 @@ class Promos {
 
     public function promo($key) {
         return $this->promos[$key];
+    }
+
+    public function setCurrent($slug) {
+        $this->current = $slug;
+    }
+
+    public function current() {
+        return $this->promos[$this->current];
     }
 
 }

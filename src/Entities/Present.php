@@ -9,7 +9,10 @@ class Present extends Model {
 
     public function __construct(array $attributes = [])
     {
-        $this->table = config('under-the-cap.current.participation_presents_table');
+        $this->promo = \App::make('UnderTheCap\Promos')->current();
+
+        $this->table = $this->promo->info()['participation_presents_table'];
+//        $this->table = config('under-the-cap.current.participation_presents_table');
 
         parent::__construct($attributes);
     }

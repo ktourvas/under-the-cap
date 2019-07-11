@@ -14,9 +14,12 @@ class Win extends Model {
 
     public function __construct( $attributes = [] )
     {
-        $this->table = config('under-the-cap.current.wins_table');
+        $this->promo = App::make('UnderTheCap\Promos')->current();
 
-        $this->promo = App::make('UnderTheCap\Promo');
+        $this->table = $this->promo->info()['wins_table'];
+//        $this->table = config('under-the-cap.current.wins_table');
+
+//        $this->promo = App::make('UnderTheCap\Promo');
 
         parent::__construct($attributes);
     }
