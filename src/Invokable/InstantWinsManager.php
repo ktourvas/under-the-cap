@@ -7,18 +7,20 @@ use InstantWin\Player;
 use InstantWin\TimePeriod;
 use InstantWin\Distribution\EvenOverTimeDistribution;
 use UnderTheCap\Entities\Present;
+use UnderTheCap\Promo;
 
 class InstantWinsManager {
 
     function __construct()
     {
+        $this->promo = new Promo();
     }
 
     function __invoke($id, $info)
     {
         // Pull the available presents. If wins are not related to specific presents use one generic present item
         // with the total of wins expected
-        $presents = $this->getPresents($id);
+        $presents = $this->getPresents($id, $info);
         $status = $this->getStatus($id, $info);
 
         if($presents->count() == 0 || $status['wins'] >=  $info['max_daily_wins'] ) {
@@ -84,9 +86,19 @@ class InstantWinsManager {
         }
     }
 
-    protected function getPresents($draw_id) {
-        return Present::where('draw_id', $draw_id)->where(function($q) {
-            $q->where('total_give', '>', 'total_given');
+    protected function getPresents($draw_id, $info) {
+        return Present::where('draw_id', $draw_id)->where(function($q) use ($info) {
+//            'limit_presents_by' => 'totals', //totals, daily
+            if($info['limit_presents_by'] == 'totals') {
+                $q->where('total_give', '>', 'total_given');
+            }
+
+            //TODO: validate, test
+            if($info['limit_presents_by'] == 'daily') {
+//                $this->promo->dayNumber();
+                $q->whereRaw('total_given < (daily_give*?)', [$this->promo->dayNumber()]);
+            }
+
         })->get();
     }
 
