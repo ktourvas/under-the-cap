@@ -18,11 +18,10 @@ class ParticipationsController extends Controller {
     public function __construct(Request $request)
     {
         if(!empty($request->utc_env)) {
-            if( !empty( config('under-the-cap.'.$request->utc_env) ) ) {
-                config([ 'under-the-cap.current' => config('under-the-cap.'.$request->utc_env) ]);
-            }
+            \App::make('UnderTheCap\Promos')->setCurrent($request->utc_env);
+            $this->promo = \App::make('UnderTheCap\Promos')->current();
         }
-        $this->promo = new Promo();
+
     }
 
     public function submitCode(Request $request) {

@@ -24,6 +24,8 @@ class Stats {
 
             if( $index != 'current' && !empty($promoInfo['participation_stats_table']) ) {
 
+                \App::make('UnderTheCap\Promos')->setCurrent($index);
+
                 config([ 'under-the-cap.current' => config('under-the-cap.'.$index) ]);
 
                 $stats = ParticipationsDay::orderBy('date', 'ASC')->get();

@@ -1,5 +1,7 @@
 <?php
 
+use UnderTheCap\Participation;
+
 Route::group([ 'middleware' => [ 'api' ] ], function () {
 
     Route::post('/api/utc/participations', 'UnderTheCap\Http\Controllers\ParticipationsController@submit');
@@ -11,7 +13,9 @@ Route::group([ 'middleware' => [ 'api' ] ], function () {
         'LaravelAdmin'
     ] ], function () {
 
-        Route::delete('/api/utc/{promo}/participations/{id}', 'UnderTheCap\Http\Controllers\LaravelAdminController@deleteParticipation');
+        Route::delete('/api/utc/{promo}/participations/{participation}', 'UnderTheCap\Http\Controllers\LaravelAdminController@deleteParticipation')
+            ->middleware('can:delete,participation')
+        ;
 
         Route::post('/api/utc/draws/{promo}/download', 'UnderTheCap\Http\Controllers\WinsController@download');
 
@@ -33,15 +37,18 @@ Route::group([ 'middleware' =>
 
     array_merge(
         [
-            'web', 'LaravelAdmin'
+            'web',
+            'LaravelAdmin'
         ],
         ((config('laravel-admin.iprestrict')) ? [ 'ipRestrict' ] : [])
     )
 
 ], function () {
 
-    Route::get(config('laravel-admin.root_url').'/utc/participations/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@participations');
+    Route::get(config('laravel-admin.root_url').'/utc/participations/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@participations')
+        ->middleware('can:viewany,UnderTheCap\Participation');
 
-    Route::get(config('laravel-admin.root_url').'/utc/draws/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@draws');
+    Route::get(config('laravel-admin.root_url').'/utc/draws/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@draws')
+        ->middleware('can:viewany,UnderTheCap\Win');
 
 });

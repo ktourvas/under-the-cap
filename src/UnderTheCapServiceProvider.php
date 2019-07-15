@@ -2,7 +2,6 @@
 
 namespace UnderTheCap;
 
-//use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider;
 use UnderTheCap\Providers\EventServiceProvider;
 
@@ -58,6 +57,9 @@ class UnderTheCapServiceProvider extends ServiceProvider
                                 'label' => 'Draws',
                                 'url' => config('laravel-admin.main_url').'/utc/draws/'.$promo
                             ],
+                        ],
+                        'authorize' => [
+                            \UnderTheCap\Participation::class
                         ]
                     ];
                 }
@@ -78,6 +80,10 @@ class UnderTheCapServiceProvider extends ServiceProvider
             ]);
 
         }
+
+        $UTCPromos = new Promos();
+
+        $this->app->instance('UnderTheCap\Promos', $UTCPromos);
 
         $this->app->register(EventServiceProvider::class);
 
