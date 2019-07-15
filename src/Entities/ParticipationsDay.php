@@ -16,8 +16,6 @@ class ParticipationsDay extends Model {
 
         $this->table = $this->promo->info()['participation_stats_table'];
 
-//        $this->table = config('under-the-cap.current.participation_stats_table');
-
         parent::__construct($attributes);
     }
 

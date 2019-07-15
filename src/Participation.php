@@ -10,48 +10,16 @@ class Participation extends Model {
 
     public function __construct(array $attributes = [])
     {
-//        dd(App::make('UnderTheCap\Promos'));
-
         $this->promo = App::make('UnderTheCap\Promos')->current();
-
-//        $this->promo = App::make('UnderTheCap\Promo');
-
-//        $this->table = config('under-the-cap.current.participation_table');
         $this->table = $this->promo->info()['participation_table'];
-
-
         $this->fillable = array_merge(
-
             array_keys($this->promo->info()['participation_fields']),
             [ 'code_id' ]
-
         );
-//        $this->fillable =
-//            array_merge(
-//                array_keys(config('under-the-cap.current.participation_fields')),
-//                [
-//                    'code_id'
-//                ]
-//            );
-
-
         $this->attributted_fields = collect($this->promo->info()['participation_fields'])
             ->filter(function ($field) {
                 return !empty($field['is_id']);
-            })
-//            ->map(function($field) {
-//            return $field;
-//        })->reject(function ($field) {
-//            return empty($field['is_id']);
-//        })
-;
-
-//        $this->attributted_fields = collect(config('under-the-cap.current.participation_fields'))->map(function($field) {
-//            return $field;
-//        })->reject(function ($field) {
-//            return empty($field['is_id']);
-//        });
-
+            });
         parent::__construct($attributes);
     }
 

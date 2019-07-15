@@ -21,10 +21,6 @@ class WinsController extends Controller {
             $this->promo = \App::make('UnderTheCap\Promos')->current();
         }
 
-//        if( !empty( $request->promo ) ) {
-//            config([ 'under-the-cap.current' => config('under-the-cap.'.$request->promo) ]);
-//        }
-//        $this->promo = new Promo();
     }
 
     public function upgrade(Request $request, $promo, $id) {
@@ -83,32 +79,6 @@ class WinsController extends Controller {
 
         }
 
-//        if( !empty( $promo ) ) {
-//            foreach($this->promo->drawableWinTypes() as $type => $info) {
-//                $existing = Win::where('type_id', $type)->count();
-//                if( $existing < $info['number'] ) {
-//                    $winners = Participation::whereDoesntHave('win')
-//                        ->inRandomOrder()
-//                        ->limit( $info['number'] - $existing )
-//                        ->get();
-//                    Win::insert(
-//                        $winners->map(function ($item) use ($type) {
-//                        return [
-//                            'participation_id' => $item->id,
-//                            'type_id' => $type,
-//                            'created_at' => Carbon::now(),
-//                            'updated_at' => Carbon::now(),
-//                        ];
-//                    })->toArray()
-//                    );
-//                }
-//            }
-//        }
-//        if($request->ajax()) {
-//            return [ 'success' => true ];
-//        } else {
-//            return redirect()->back();
-//        }
     }
 
     /**
@@ -172,8 +142,6 @@ class WinsController extends Controller {
             $new = $this->drawSqlAddExtras($new, $info);
 
             $new->inRandomOrder()->limit( ($number - $existing->count()) );
-
-//            dd($new->toSql());
 
             $new = $new->get();
 
@@ -250,10 +218,7 @@ class WinsController extends Controller {
                 $wins->where($column, $value);
             }
         }
-        return $wins
-//            ->toSql()
-            ->get()
-        ;
+        return $wins->get();
     }
 
     public function download(Request $request, $promo) {

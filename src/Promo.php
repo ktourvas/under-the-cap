@@ -25,7 +25,6 @@ class Promo {
         $this->info['end_date'] = strtotime($this->info['end_date']);
 
         $this->participation_fields = collect($this->info['participation_fields']);
-//        $this->participation_fields = collect(config('under-the-cap.current.participation_fields'));
     }
 
     /**
@@ -99,10 +98,6 @@ class Promo {
         return collect($this->info['under-the-cap.current.participation_fields'])->filter(function ($field, $key) {
             return !empty($field['is_searchable']);
         });
-
-//        return collect(config('under-the-cap.current.participation_fields'))->filter(function ($field, $key) {
-//            return !empty($field['is_searchable']);
-//        });
 
     }
 

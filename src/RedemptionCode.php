@@ -10,7 +10,7 @@ class RedemptionCode extends Model {
         $this->promo = \App::make('UnderTheCap\Promos')->current();
 
         $this->table = $this->promo->info()['redemption_code_table'];
-//        $this->table = config('under-the-cap.current.redemption_code_table');
+
         parent::__construct($attributes);
     }
 

@@ -18,10 +18,6 @@ class LaravelAdminController extends Controller {
             $this->promo = \App::make('UnderTheCap\Promos')->current();
         }
 
-//        if( !empty( $request->promo ) ) {
-//            config([ 'under-the-cap.current' => config('under-the-cap.'.$request->promo) ]);
-//        }
-//        $this->promo = new Promo();
     }
 
     public function participations(Request $request, $promo) {
@@ -59,6 +55,7 @@ class LaravelAdminController extends Controller {
                     ->orderBy('runnerup', 'asc')
 
                     ->orderBy('created_at', 'desc')
+
                     ->orderBy('associated_date', 'desc')
 
                     ->get(),
