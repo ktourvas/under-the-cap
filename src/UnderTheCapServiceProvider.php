@@ -57,6 +57,9 @@ class UnderTheCapServiceProvider extends ServiceProvider
                                 'label' => 'Draws',
                                 'url' => config('laravel-admin.main_url').'/utc/draws/'.$promo
                             ],
+                        ],
+                        'authorize' => [
+                            \UnderTheCap\Participation::class
                         ]
                     ];
                 }

@@ -14,7 +14,7 @@ class LaravelAdminController extends Controller {
     {
 
         if(!empty($request->promo)) {
-            \App::make('UnderTheCap\Promos')->setCurrent($request->utc_env);
+            \App::make('UnderTheCap\Promos')->setCurrent($request->promo);
             $this->promo = \App::make('UnderTheCap\Promos')->current();
         }
 
@@ -40,8 +40,10 @@ class LaravelAdminController extends Controller {
         ]);
     }
 
-    public function deleteParticipation($promo, $id) {
-        return [ 'success' => Participation::find($id)->delete() ];
+    public function deleteParticipation($promo, Participation $participation) {
+
+        return [ 'success' => $participation->delete() ];
+
     }
 
     public function draws(Request $request, $promo) {

@@ -95,7 +95,7 @@ class Promo {
      */
     public function ParticipationSearchables() {
 
-        return collect($this->info['under-the-cap.current.participation_fields'])->filter(function ($field, $key) {
+        return collect($this->info['participation_fields'])->filter(function ($field, $key) {
             return !empty($field['is_searchable']);
         });
 
