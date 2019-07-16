@@ -17,7 +17,7 @@ class WinsController extends Controller {
     {
 
         if(!empty($request->promo)) {
-            \App::make('UnderTheCap\Promos')->setCurrent($request->utc_env);
+            \App::make('UnderTheCap\Promos')->setCurrent($request->promo);
             $this->promo = \App::make('UnderTheCap\Promos')->current();
         }
 
