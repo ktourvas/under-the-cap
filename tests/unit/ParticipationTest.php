@@ -1,6 +1,5 @@
 <?php
 
-//class ParticipationTest extends \PHPUnit\Framework\TestCase {
 class ParticipationTest extends Orchestra\Testbench\TestCase {
 
     protected function getEnvironmentSetUp($app)

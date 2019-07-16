@@ -1,6 +1,5 @@
 <?php
 
-//class ParticipationTest extends \PHPUnit\Framework\TestCase {
 class DrawTest extends Orchestra\Testbench\TestCase {
 
     /**

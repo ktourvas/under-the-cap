@@ -1,6 +1,5 @@
 <?php
 
-//class ParticipationTest extends \PHPUnit\Framework\TestCase {
 class InstantWinsTest extends Orchestra\Testbench\TestCase {
 
     /**
@@ -25,18 +24,13 @@ class InstantWinsTest extends Orchestra\Testbench\TestCase {
         $this->assertTrue(is_callable($instant));
     }
 
-    public function testInstantWin() {
-
-        $instant = new UnderTheCap\Invokable\InstantWinsManager();
-
-        foreach($this->promo->instantDraws() as $id => $info) {
-
-            for ($i=0; $i<=100000; $i++) {
-                $instant($id, $info);
-            }
-
-        }
-
-    }
+//    public function testInstantWin() {
+//        $instant = new UnderTheCap\Invokable\InstantWinsManager();
+//        foreach($this->promo->instantDraws() as $id => $info) {
+//            for ($i=0; $i<=100000; $i++) {
+//                $instant($id, $info);
+//            }
+//        }
+//    }
 
 }
