@@ -146,15 +146,19 @@
 {{--                            {{ $win->present->title }}--}}
 {{--                        @endif--}}
 
-                        @if($win->winpresent()->exists())
+                        @if( $win->winpresent()->exists() )
+
+                            @if( $win->winpresent->present()->exists() )
 
                                 {{ $win->winpresent->present->title }}
 
-                                @if($win->winpresent->variant()->exists())
+                                @if( $win->winpresent->variant()->exists() )
 
                                     :: {{ $win->winpresent->variant->title }}
 
                                 @endif
+
+                            @endif
 
                         @endif
 
