@@ -4,6 +4,7 @@ namespace UnderTheCap\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use phpDocumentor\Reflection\Types\String_;
 use UnderTheCap\Entities\Present;
 use UnderTheCap\Exceptions\PromoConfigurationException;
 use UnderTheCap\Participation;
@@ -13,6 +14,8 @@ use Carbon\Carbon;
 
 class WinsController extends Controller {
 
+    protected $promo;
+
     public function __construct(Request $request)
     {
 
@@ -21,6 +24,13 @@ class WinsController extends Controller {
             $this->promo = \App::make('UnderTheCap\Promos')->current();
         }
 
+    }
+
+    public function addVariant(Request $request, $promo, Win $win, String $token = null) {
+        return [ 'success' => $win->winpresent->update([
+            'variant_id' => $request->variant
+        ])
+        ];
     }
 
     public function upgrade(Request $request, $promo, $id) {

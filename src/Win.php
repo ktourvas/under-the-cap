@@ -10,6 +10,8 @@ class Win extends Model {
 
     protected $fillable = [ 'type_id', 'participation_id', 'bumped', 'associated_date', 'confirmed', 'runnerup', 'present_id' ];
 
+    protected $hidden = [ 'runnerup', 'bumped', 'associated_date', 'confirmed' ];
+
     protected $appends = [ 'type_name' ];
 
     public function __construct( $attributes = [] )
@@ -25,10 +27,20 @@ class Win extends Model {
     }
 
     /**
+     * @deprecated
+     * @deprecated the new relation currently named winpresent will be replacing this
+     *
      * The gift associated with the win
      */
     public function present() {
         return $this->belongsTo('UnderTheCap\Entities\Present', 'present_id');
+    }
+
+    /**
+     * The gift associated with the win
+     */
+    public function winpresent() {
+        return $this->hasOne('UnderTheCap\Entities\WinPresent', 'win_id', 'id');
     }
 
     /**

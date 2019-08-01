@@ -79,7 +79,8 @@
 
                 <th><abbr title="Position">ID (Local)</abbr></th>
 
-                @foreach(config('under-the-cap.current.participation_fields') as $field)
+{{--                @foreach(config('under-the-cap.current.participation_fields') as $field)--}}
+                @foreach( $promo->participationFields() as $key => $field )
                     <th>{{ $field['title'] }}</th>
                 @endforeach
 
@@ -134,18 +135,32 @@
                     @endforeach
 
                     <td>{{ $win->participation->created_at }}</td>
+
                     <td>{{ $win->draw_name }}</td>
+
                     <td>{{ $win->type_name }}</td>
 
                     <td>
-                        @if($win->present()->exists())
-                            {{ $win->present->title }}
+
+{{--                        @if($win->present()->exists())--}}
+{{--                            {{ $win->present->title }}--}}
+{{--                        @endif--}}
+
+                        @if($win->winpresent()->exists())
+
+                                {{ $win->winpresent->present->title }}
+
+                                @if($win->winpresent->variant()->exists())
+
+                                    :: {{ $win->winpresent->variant->title }}
+
+                                @endif
+
                         @endif
+
                     </td>
 
-
                     <td>{{ $win->associated_date }}</td>
-
                     <td>{{ $win->confirmed }}</td>
                     <td>{{ $win->bumped }}</td>
                     <td>{{ $win->created_at }}</td>

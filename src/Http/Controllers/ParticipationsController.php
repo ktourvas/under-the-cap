@@ -4,12 +4,15 @@ namespace UnderTheCap\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\App;
+use UnderTheCap\Entities\WinPresent;
 use UnderTheCap\Events\ParticipationSubmitted;
 use UnderTheCap\Exceptions\RedemptionCodeException;
 use UnderTheCap\Invokable\InstantWinsManager;
 use UnderTheCap\Participation;
 use UnderTheCap\Promo;
 use UnderTheCap\RedemptionCode;
+use UnderTheCap\Win;
 
 class ParticipationsController extends Controller {
 
@@ -30,6 +33,7 @@ class ParticipationsController extends Controller {
 
     public function submit(Request $request, $submissionType = 'sole')
     {
+
         //Start by validating the promo status. Throws PromoStatusException if status !== r
         $this->promo->validatePromoStatus();
 
@@ -81,8 +85,11 @@ class ParticipationsController extends Controller {
      * @throws \UnderTheCap\Exceptions\PromoConfigurationException
      */
     private function playInstant(Participation $participation) {
+
         if( $this->promo->instantDraws()->count() > 0 ) {
+
             $instant = new InstantWinsManager();
+
             foreach( $this->promo->instantDraws() as $id => $info ) {
 
                 if(
@@ -96,18 +103,50 @@ class ParticipationsController extends Controller {
                         ->count() == 0) {
 
                     $win = $instant($id, $info);
+
                     if( $win !== false) {
-                        $participation->win()->create([
+
+                        $pwin = $participation->win()->create([
                             'type_id' => $id,
                             'present_id' => $win['id'],
                             'confirmed' => (!empty($info['auto_approved']) &&  $info['auto_approved'] === true) ? 1 : 0
                         ]);
+
+                        $winpresent = $pwin->winpresent()->create([
+                            'present_id' => $win['id']
+                        ]);
+
                     }
 
                 }
 
             }
-            $participation->load('win');
+
+
+            $participation->load('win.winpresent.present');
+
+            if( $participation->win()->exists() ) {
+
+                $participation->win[0]->winpresent->present->load(['variants' => function($q) {
+                    $q->where( 'remaining', '>', 0);
+                }]);
+
+                if( count($participation->win[0]->winpresent->present->variants) == 1 ) {
+
+                    $participation->win[0]->winpresent->update([
+                        'variant_id' => $participation->win[0]->winpresent->present->variants[0]->id
+                    ]);
+
+                    $participation->win[0]->winpresent->present->variants[0]->update([
+                        'remaining' =>  \DB::raw(' remaining - 1 ')
+                    ]);
+
+                }
+
+            }
+
+
+
         }
         return $participation;
     }
@@ -158,6 +197,15 @@ class ParticipationsController extends Controller {
             $create[$field] = $request->get($field);
         }
         return $create;
+    }
+
+
+    public function truncate() {
+        if(!\App::environment('production')) {
+            WinPresent::truncate();
+            Win::truncate();
+            Participation::truncate();
+        }
     }
 
 }

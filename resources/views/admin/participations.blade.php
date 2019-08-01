@@ -66,7 +66,8 @@
                     <abbr title="Position">ID (Local)</abbr>
                 </th>
 
-                @foreach(config('under-the-cap.current.participation_fields') as $field)
+{{--                @foreach(config('under-the-cap.current.participation_fields') as $field)--}}
+                @foreach( $promo->participationFields() as $key => $field )
                     <th>
                         {{ $field['title'] }}
                     </th>
@@ -82,7 +83,9 @@
 
                     <th>{{ $participation->id }}</th>
 
-                    @foreach(config('under-the-cap.current.participation_fields') as $field => $info)
+{{--                    @foreach( config('under-the-cap.current.participation_fields') as $field => $info )--}}
+
+                    @foreach( $promo->participationFields() as $field => $info )
 
                         @if(!empty($info['is_id']))
                             <td>{{ $participation->getDynamicField($field) }}</td>

@@ -6,7 +6,16 @@ Route::group([ 'middleware' => [ 'api' ] ], function () {
 
     Route::post('/api/utc/participations', 'UnderTheCap\Http\Controllers\ParticipationsController@submit');
 
+    /**
+     * Route only working on non production environments, for testing needs
+     */
+    Route::post('/api/utc/participations/truncate', 'UnderTheCap\Http\Controllers\ParticipationsController@truncate');
+
     Route::post('/api/utc/code', 'UnderTheCap\Http\Controllers\ParticipationsController@submitCode');
+
+    Route::post('/api/utc/{promo}/wins/{win}/variants', 'UnderTheCap\Http\Controllers\WinsController@addVariant');
+
+
 
     Route::group([ 'middleware' => [
         'auth:api',

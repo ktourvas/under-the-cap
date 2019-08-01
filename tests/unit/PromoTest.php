@@ -12,13 +12,21 @@ class PromoTest extends Orchestra\Testbench\TestCase {
         // and other test setup steps you need to perform
         $this->promos = new UnderTheCap\Promos();
 
-        $this->promo = new UnderTheCap\Promo();
+        $this->promo = $this->promos->promo('current');
+
+
+//        $this->promo = new UnderTheCap\Promo();
+
+        $this->promos = $this->app->make('UnderTheCap\Promos');
+
     }
 
     protected function getEnvironmentSetUp($app)
     {
         // Setup default database to use sqlite :memory:
         $app['config']->set('under-the-cap', include __DIR__.'/../../config/under-the-cap.php' );
+
+
 
     }
 
