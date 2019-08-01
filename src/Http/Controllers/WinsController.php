@@ -27,9 +27,23 @@ class WinsController extends Controller {
     }
 
     public function addVariant(Request $request, $promo, Win $win, String $token = null) {
-        return [ 'success' => $win->winpresent->update([
+
+        if($win->winpresent->update([
             'variant_id' => $request->variant
-        ])
+        ])) {
+
+            Present::find($win->winpresent->present_id)->variants()->find($request->variant)->decrement('remaining');
+
+            return [ 'success' => true ];
+
+        }
+
+        return [ 'success' => false
+
+//            $win->winpresent->update([
+//                'variant_id' => $request->variant
+//            ])
+
         ];
     }
 
