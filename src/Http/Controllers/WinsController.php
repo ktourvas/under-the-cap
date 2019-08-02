@@ -34,7 +34,10 @@ class WinsController extends Controller {
 
             Present::find($win->winpresent->present_id)->variants()->find($request->variant)->decrement('remaining');
 
-            return [ 'success' => true ];
+            return [
+                'success' => true,
+                'variant' => $request->variant
+            ];
 
         }
 
