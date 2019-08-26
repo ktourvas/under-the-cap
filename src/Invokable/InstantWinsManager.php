@@ -97,7 +97,7 @@ class InstantWinsManager {
             }
 
             //TODO: validate, test
-            if($info['limit_presents_by'] == 'daily') {
+            if( $info['limit_presents_by'] == 'daily' ) {
 //                $this->promo->dayNumber();
                 $q->whereRaw('total_given < (daily_give*?)', [$this->promo->dayNumber()]);
             }
