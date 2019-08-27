@@ -118,7 +118,7 @@
 
     @endif
 
-    {{ $participations->links() }}
+    {{ $participations->links('mma::partials.pagination') }}
 
 @endsection
 
