@@ -29,8 +29,18 @@ class Promos {
         return $slug == $this->current;
     }
 
+    /**
+     * Returns the promos collection item that corresponds to the $this->current name.
+     * If none is set then the first found is returned.
+     *
+     * @return mixed
+     */
     public function current() {
-        return $this->promos->get($this->current);
+
+        if( $this->promos->has( $this->current ) ) {
+            return $this->promos->get($this->current);
+        }
+        return $this->promos->first();
     }
 
 }
