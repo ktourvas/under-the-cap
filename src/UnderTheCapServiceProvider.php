@@ -50,6 +50,10 @@ class UnderTheCapServiceProvider extends ServiceProvider
                         ],
                         'children' => [
                             [
+                                'label' => 'Codes',
+                                'url' => config('laravel-admin.main_url').'/utc/codes/'.$promo
+                            ],
+                            [
                                 'label' => 'Participations',
                                 'url' => config('laravel-admin.main_url').'/utc/participations/'.$promo
                             ],

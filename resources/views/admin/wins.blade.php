@@ -5,7 +5,7 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
             <li>
-                <a href="{{ config('laravel-admin.root_url') }}">
+                <a href="/{{ config('laravel-admin.root_url') }}">
                     Dashboard
                 </a>
             </li>

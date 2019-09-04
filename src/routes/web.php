@@ -1,7 +1,5 @@
 <?php
 
-use UnderTheCap\Participation;
-
 Route::group([ 'middleware' => [ 'api' ] ], function () {
 
     Route::post('/api/utc/participations', 'UnderTheCap\Http\Controllers\ParticipationsController@submit');
@@ -14,8 +12,6 @@ Route::group([ 'middleware' => [ 'api' ] ], function () {
     Route::post('/api/utc/code', 'UnderTheCap\Http\Controllers\ParticipationsController@submitCode');
 
     Route::post('/api/utc/{promo}/wins/{win}/variants', 'UnderTheCap\Http\Controllers\WinsController@addVariant');
-
-
 
     Route::group([ 'middleware' => [
         'auth:api',
@@ -59,5 +55,8 @@ Route::group([ 'middleware' =>
 
     Route::get(config('laravel-admin.root_url').'/utc/draws/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@draws')
         ->middleware('can:viewany,UnderTheCap\Win');
+
+    Route::get(config('laravel-admin.root_url').'/utc/codes/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@codes')
+        ->middleware('can:viewany,UnderTheCap\RedemptionCode');
 
 });

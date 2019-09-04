@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use UnderTheCap\Participation;
 use UnderTheCap\Promo;
+use UnderTheCap\RedemptionCode;
 use UnderTheCap\Win;
 
 class LaravelAdminController extends Controller {
@@ -91,6 +92,20 @@ class LaravelAdminController extends Controller {
             fputcsv($out, $line);
         }
         fclose($out);
+    }
+
+    public function codes(Request $request, $promo) {
+        $codes = RedemptionCode::orderBy('id', 'asc')->where(function($q) use ($request) {
+            if(!empty($request->q)) {
+                $q->where('code', 'LIKE', '%'.$request->q.'%');
+            }
+
+        })->paginate('50');
+        return view('utc::admin.redemptioncodes', [
+            'promo' => $this->promo,
+            'q' => $request->q,
+            'codes' => $codes
+        ]);
     }
 
 }

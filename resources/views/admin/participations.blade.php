@@ -4,7 +4,7 @@
 
     <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
-            <li><a href="{{ config('laravel-admin.root_url') }}">Dashboard</a></li>
+            <li><a href="/{{ config('laravel-admin.root_url') }}">Dashboard</a></li>
             <li><a href="{{ config('laravel-admin.root_url') }}/utc/participations/{{ $promo->slug() }}">Participations - {{ $promo->title() }}</a></li>
         </ul>
     </nav>
