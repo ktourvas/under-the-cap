@@ -54,7 +54,8 @@ class Stats {
                     'type' => 'number-tile',
                     'title' => $promoInfo['name'].' - Participations total',
                     'number' => Participation::count(),
-                    'url' => 'utc/participations/exohi',
+//                    'url' => 'utc/participations/exohi',
+                    'url' => config('laravel-admin.main_url').'/utc/participations/'.$index
                 ];
 
                 if($this->promos->promo($index)->status() == 'r') {
@@ -63,7 +64,8 @@ class Stats {
                         'type' => 'number-tile',
                         'title' => $promoInfo['name'].' - Participations today',
                         'number' => Participation::whereDate('created_at', date('Y-m-d', time()))->count(),
-                        'url' => 'utc/participations/exohi',
+//                        'url' => 'utc/participations/exohi',
+                        'url' => config('laravel-admin.main_url').'/utc/participations/'.$index
                     ];
 
                 }
