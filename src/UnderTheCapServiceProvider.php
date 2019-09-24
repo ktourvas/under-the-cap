@@ -38,11 +38,12 @@ class UnderTheCapServiceProvider extends ServiceProvider
     public function register()
     {
 
-        if(!empty(config('laravel-admin'))) {
+        if( !empty( config('laravel-admin') ) ) {
 
             $appends = [];
 
             foreach(config('under-the-cap') as $promo => $info) {
+
                 if($promo !== 'current') {
                     $appends[$promo] = [
                         'head' => [
@@ -63,7 +64,15 @@ class UnderTheCapServiceProvider extends ServiceProvider
                             ],
                         ],
                         'authorize' => [
-                            \UnderTheCap\Participation::class
+
+                            [
+                                'view',
+                                new Promo( $info )
+                            ]
+
+//                            \UnderTheCap\Participation::class
+//                            \UnderTheCap\Promo::class
+//                            Promo::find( $info['id'] )
                         ]
                     ];
                 }
@@ -78,7 +87,6 @@ class UnderTheCapServiceProvider extends ServiceProvider
                     config('laravel-admin.dashboard.blocks'),
                     [
                         \UnderTheCap\Invokable\Stats::class,
-
                     ]
                 )
             ]);

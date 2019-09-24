@@ -4,16 +4,19 @@ namespace UnderTheCap;
 
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use UnderTheCap\Exceptions\PromoConfigurationException;
 use UnderTheCap\Exceptions\PromoStatusException;
 use Carbon\Carbon;
 
-class Promo {
+class Promo extends Model {
 
     protected $info, $participation_fields, $period;
 
     public function __construct($info = null)
     {
+        $this->id = $info['id'] ?? 0;
+
         $this->info = $info;
         if( empty($this->info) ) {
             $this->info = config('under-the-cap.current');

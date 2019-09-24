@@ -4,6 +4,7 @@ namespace UnderTheCap\Invokable;
 
 use UnderTheCap\Entities\ParticipationsDay;
 use UnderTheCap\Participation;
+use UnderTheCap\Promos;
 
 class Stats {
 
@@ -19,6 +20,8 @@ class Stats {
     protected function fetch() {
 
         $result = [];
+
+        $this->promos = new Promos();
 
         foreach( config('under-the-cap') as $index => $promoInfo ) {
 
@@ -54,12 +57,18 @@ class Stats {
                     'url' => 'utc/participations/exohi',
                 ];
 
-                $result[] = [
-                    'type' => 'number-tile',
-                    'title' => $promoInfo['name'].' - Participations today',
-                    'number' => Participation::whereDate('created_at', date('Y-m-d', time()))->count(),
-                    'url' => 'utc/participations/exohi',
-                ];
+                if($this->promos->promo($index)->status() == 'r') {
+
+                    $result[] = [
+                        'type' => 'number-tile',
+                        'title' => $promoInfo['name'].' - Participations today',
+                        'number' => Participation::whereDate('created_at', date('Y-m-d', time()))->count(),
+                        'url' => 'utc/participations/exohi',
+                    ];
+
+                }
+
+
 
             }
         }

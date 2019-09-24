@@ -34,6 +34,7 @@ class LaravelAdminController extends Controller {
             }
 
         })->paginate('50');
+
         return view('utc::admin.participations', [
             'promo' => $this->promo,
             'q' => $request->q,
