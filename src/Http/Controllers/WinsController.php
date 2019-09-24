@@ -62,8 +62,30 @@ class WinsController extends Controller {
         ]) ];
     }
 
-    public function delete(Request $request, $promo, $id) {
-        return [ 'success' => Win::find($id)->delete() ];
+    public function delete(Request $request, $promo, Win $win) {
+
+        if( !empty( $win->winpresent->variant ) ) {
+            $variant = $win->winpresent->variant;
+            $variant->remaining++;
+            $variant->save();
+        }
+
+        if( !empty( $win->winpresent->present ) ) {
+            $present = $win->winpresent->present;
+            $present->total_given--;
+            $present->save();
+        }
+
+        /**
+         * The relating relationship deletion can be deprecated
+         * and replaced by proper cascading relationship in DB
+         */
+
+        $win->winpresent->delete();
+
+        return [
+            'success' => $win->delete()
+        ];
     }
 
     public function draw(Request $request) {

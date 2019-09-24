@@ -24,7 +24,7 @@ Route::group([ 'middleware' => [ 'api' ] ], function () {
 
         Route::post('/api/utc/draws/{promo}/download', 'UnderTheCap\Http\Controllers\WinsController@download');
 
-        Route::delete('/api/utc/draws/{promo}/{id}', 'UnderTheCap\Http\Controllers\WinsController@delete');
+        Route::delete('/api/utc/draws/{promo}/{win}', 'UnderTheCap\Http\Controllers\WinsController@delete');
 
         Route::put('/api/utc/draws/{promo}/{id}/upgrade', 'UnderTheCap\Http\Controllers\WinsController@upgrade');
 
