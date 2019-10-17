@@ -151,6 +151,8 @@ class Promo extends Model {
 
     public function validateDrawsConfig() {
 
+        return true;
+
         //TODO: refactor fields array to compare against depending on type
 
         if(!empty($this->info['draws'])) {
