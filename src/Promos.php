@@ -9,9 +9,13 @@ class Promos {
     public function __construct()
     {
         $this->promos = collect([]);
-        foreach ( config('under-the-cap') as $key => $promo ) {
-            $this->promos->put($key, new Promo($promo));
+
+        if( config('under-the-cap') !== null ) {
+            foreach ( config('under-the-cap') as $key => $promo ) {
+                $this->promos->put($key, new Promo($promo));
+            }
         }
+
     }
 
     public function promo($key) {

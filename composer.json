@@ -2,8 +2,6 @@
   "name": "ktourvas/under-the-cap",
   "type": "laravel package",
   "require": {
-    "laravel/framework": "^5.4",
-    "phpunit/phpunit": "^7.5",
     "konrness/instant-win": "^0.2.0"
   },
   "license": "MIT",
@@ -26,6 +24,7 @@
     }
   },
   "require-dev": {
+    "phpunit/phpunit": "^7.5",
     "orchestra/testbench": "^3.5"
   }
 }
