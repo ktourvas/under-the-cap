@@ -17,12 +17,12 @@ class InstantWinsManager {
         $this->promo = \App::make('UnderTheCap\Promos')->current();
     }
 
-    function __invoke($id, $info)
+    function __invoke($id, $info, $participation)
     {
 
         // Pull the available presents. If wins are not related to specific presents use one generic present item
         // with the total of wins expected
-        $presents = $this->getPresents($id, $info);
+        $presents = $this->getPresents($id, $info, $participation);
         $status = $this->getStatus($id, $info);
 
         if( $presents->count() == 0 || $status['wins'] >=  $info['max_daily_wins'] ) {
@@ -88,15 +88,21 @@ class InstantWinsManager {
         }
     }
 
-    protected function getPresents($draw_id, $info) {
-        return Present::where('draw_id', $draw_id)->where(function($q) use ($info) {
+    protected function getPresents($draw_id, $info, $participation) {
+        return Present::where('draw_id', $draw_id)->where(function($q) use ($info, $participation) {
+
+            if( !empty($info['match_participation_present_fields']) ) {
+                foreach ($info['match_participation_present_fields'] as $field) {
+                    $q->where( $field, $participation[$field] );
+                }
+            }
+
 //            'limit_presents_by' => 'totals', //totals, daily, dailytototals
             if($info['limit_presents_by'] == 'totals') {
 //                $q->where('total_give', '>', 'total_given');
                 $q->whereRaw('total_give > total_given');
             }
 
-            //TODO: validate, test
             if( $info['limit_presents_by'] == 'daily' ) {
 //                $this->promo->dayNumber();
                 $q->whereRaw('total_given < (daily_give*?)', [$this->promo->dayNumber()]);

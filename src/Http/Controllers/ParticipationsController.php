@@ -84,7 +84,7 @@ class ParticipationsController extends Controller {
      * @return Participation
      * @throws \UnderTheCap\Exceptions\PromoConfigurationException
      */
-    private function playInstant(Participation $participation) {
+    public function playInstant(Participation $participation) {
 
         if( $this->promo->instantDraws()->count() > 0 ) {
 
@@ -92,36 +92,43 @@ class ParticipationsController extends Controller {
 
             foreach( $this->promo->instantDraws() as $id => $info ) {
 
-                if(
-                    Participation::whereHas('win', function($q) use ($id) {
-                        $q->where('type_id', $id);
-                    })
-                        ->where(function($q) use ($participation) {
-                            $q->where('email', $participation->email)
-                                ->orWhere('tel', $participation->tel);
+                if( !empty($info['restrict_wins_by']) ) {
+                    if(
+                        Participation::whereHas('win', function($q) use ($id, $info) {
+                            $q->where('type_id', $id);
                         })
-                        ->count() == 0) {
-
-                    $win = $instant($id, $info);
-
-                    if( $win !== false) {
-
-                        $pwin = $participation->win()->create([
-                            'type_id' => $id,
-                            'present_id' => $win['id'],
-                            'confirmed' => (!empty($info['auto_approved']) &&  $info['auto_approved'] === true) ? 1 : 0
-                        ]);
-
-                        $winpresent = $pwin->winpresent()->create([
-                            'present_id' => $win['id']
-                        ]);
-
+                            ->where(function($q) use ($participation, $info) {
+                                if(is_array($info['restrict_wins_by'])) {
+                                    foreach ($info['restrict_wins_by'] as $field ) {
+                                        $q->where($field, $participation[$field]);
+                                    }
+                                } else {
+                                    $q->where($info['restrict_wins_by'], $participation[$info['restrict_wins_by']]);
+                                }
+                            })
+                            ->count() != 0)
+                    {
+                        continue;
                     }
+                }
+
+                $win = $instant($id, $info, $participation);
+
+                if( $win !== false) {
+
+                    $pwin = $participation->win()->create([
+                        'type_id' => $id,
+                        'present_id' => $win['id'],
+                        'confirmed' => (!empty($info['auto_approved']) &&  $info['auto_approved'] === true) ? 1 : 0
+                    ]);
+
+                    $winpresent = $pwin->winpresent()->create([
+                        'present_id' => $win['id']
+                    ]);
 
                 }
 
             }
-
 
             $participation->load('win.winpresent.present');
 
@@ -144,8 +151,6 @@ class ParticipationsController extends Controller {
                 }
 
             }
-
-
 
         }
         return $participation;
