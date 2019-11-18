@@ -4,6 +4,7 @@ namespace UnderTheCap\Policies;
 
 use App\User;
 use UnderTheCap\Participation;
+use UnderTheCap\RedemptionCode;
 
 class RedemptionCodePolicy
 {
@@ -11,89 +12,31 @@ class RedemptionCodePolicy
     public function __construct() {}
 
     public function viewAny(User $user) {
-        return $user->permissions()
-                ->where('policy', 'RedemptionCode')
-                ->where('viewany', 1)
-                ->count() === 1;
+        return $user->canViewAny(RedemptionCode::class);
     }
 
-    public function create(User $user)
-    {
-
-        return $user->permissions()
-                ->where('policy', 'RedemptionCode')
-                ->where('view', 1)
-                ->count() === 1;
+    public function create(User $user) {
+        return $user->canCreate(RedemptionCode::class);
     }
 
-    public function view(User $user, Participation $participation)
-    {
-        return $user
-                ->permissions()
-                ->where('policy', 'RedemptionCode')
-                ->where(function($q) use ($participation) {
-                    $q->where('view', 1)
-                        ->orWhereHas('records', function($q) use ($participation) {
-                            $q->where('record_id', $participation->id)->where('view', 1);
-                        });
-                })
-                ->count() > 0;
+    public function view(User $user, RedemptionCode $code) {
+        return $user->canView($code);
     }
 
-    public function update(User $user, Participation $participation)
-    {
-        return $user
-                ->permissions()
-                ->where('policy', 'RedemptionCode')
-                ->where(function($q) use ($participation) {
-                    $q->where('update', 1)
-                        ->orWhereHas('records', function($q) use ($participation) {
-                            $q->where('record_id', $participation->id)->where('update', 1);
-                        });
-                })
-                ->count() > 0;
+    public function update(User $user, RedemptionCode $code) {
+        return $user->canUpdate($code);
     }
 
-    public function delete(User $user, Participation $participation)
-    {
-        return $user
-                ->permissions()
-                ->where('policy', 'RedemptionCode')
-                ->where(function($q) use ($participation) {
-                    $q->where('delete', 1)
-                        ->orWhereHas('records', function($q) use ($participation) {
-                            $q->where('record_id', $participation->id)->where('delete', 1);
-                    });
-                })
-            ->count() > 0;
+    public function delete(User $user, RedemptionCode $code) {
+        return $user->canDelete($code);
     }
 
-    public function restore(User $user, Participation $participation)
-    {
-        return $user
-                ->permissions()
-                ->where('policy', 'RedemptionCode')
-                ->where(function($q) use ($participation) {
-                    $q->where('delete', 1)
-                        ->orWhereHas('records', function($q) use ($participation) {
-                            $q->where('record_id', $participation->id)->where('delete', 1);
-                        });
-                })
-                ->count() > 0;
+    public function restore(User $user, RedemptionCode $code) {
+        return $user->canRestore($code);
     }
 
-    public function forceDelete(User $user, Participation $participation)
-    {
-        return $user
-                ->permissions()
-                ->where('policy', 'RedemptionCode')
-                ->where(function($q) use ($participation) {
-                    $q->where('delete', 1)
-                        ->orWhereHas('records', function($q) use ($participation) {
-                            $q->where('record_id', $participation->id)->where('delete', 1);
-                        });
-                })
-                ->count() > 0;
+    public function forceDelete(User $user, RedemptionCode $code) {
+        return $user->canForceDelete($code);
     }
 
 }

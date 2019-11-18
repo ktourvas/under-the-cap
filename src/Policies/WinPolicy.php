@@ -4,6 +4,7 @@ namespace UnderTheCap\Policies;
 
 use App\User;
 use laravel\contacts\Contact;
+use UnderTheCap\Win;
 
 class WinPolicy
 {
@@ -11,40 +12,31 @@ class WinPolicy
     public function __construct() {}
 
     public function viewAny(User $user) {
-        return $user->permissions()
-                ->where('policy', 'Win')
-                ->where('viewany', 1)
-                ->count() === 1;
+        return $user->canViewAny(Win::class);
     }
 
-    public function view(User $user, Win $win)
-    {
-        return false;
+    public function view(User $user, Win $win) {
+        return $user->canView($win);
     }
 
-    public function create(User $user, Win $win)
-    {
-        return false;
+    public function create(User $user) {
+        return $user->canCreate(Win::class);
     }
 
-    public function update(User $user, Win $win)
-    {
-        return false;
+    public function update(User $user, Win $win) {
+        return $user->canUpdate($win);
     }
 
-    public function delete(User $user, Win $win)
-    {
-        return false;
+    public function delete(User $user, Win $win) {
+        return $user->canDelete($win);
     }
 
-    public function restore(User $user, Win $win)
-    {
-        return false;
+    public function restore(User $user, Win $win) {
+        return $user->canRestore($win);
     }
 
-    public function forceDelete(User $user, Win $win)
-    {
-        return false;
+    public function forceDelete(User $user, Win $win) {
+        return $user->canForceDelete($win);
     }
 
 }

@@ -2,7 +2,8 @@
   "name": "ktourvas/under-the-cap",
   "type": "laravel package",
   "require": {
-    "konrness/instant-win": "^0.2.0"
+    "konrness/instant-win": "^0.2.0",
+    "ktourvas/rolesandperms": "^1.0"
   },
   "license": "MIT",
   "authors": [
@@ -21,6 +22,12 @@
       "providers": [
         "UnderTheCap\\UnderTheCapServiceProvider"
       ]
+    }
+  },
+  "repositories": {
+    "rolesandperms": {
+      "type": "vcs",
+      "url": "https://github.com/ktourvas/rolesandperms.git"
     }
   }
 }
