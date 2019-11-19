@@ -3,9 +3,11 @@
   "type": "laravel package",
   "require": {
     "konrness/instant-win": "^0.2.0",
-    "ktourvas/rolesandperms": "^1.0",
+    "ktourvas/rolesandperms": "^1.0@beta",
     "laravel/passport": "^8.0"
   },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "license": "MIT",
   "authors": [
     {
