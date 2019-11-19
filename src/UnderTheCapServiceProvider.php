@@ -37,44 +37,45 @@ class UnderTheCapServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
         if( !empty( config('laravel-admin') ) ) {
 
             $appends = [];
 
-            foreach(config('under-the-cap') as $promo => $info) {
+            if( config('under-the-cap') !== null ) {
+                foreach(config('under-the-cap') as $promo => $info) {
 
-                if($promo !== 'current') {
-                    $appends[$promo] = [
-                        'head' => [
-                            'label' => $info['name']
-                        ],
-                        'children' => [
-                            [
-                                'label' => 'Codes',
-                                'url' => config('laravel-admin.main_url').'/utc/codes/'.$promo
+                    if($promo !== 'current') {
+                        $appends[$promo] = [
+                            'head' => [
+                                'label' => $info['name']
                             ],
-                            [
-                                'label' => 'Participations',
-                                'url' => config('laravel-admin.main_url').'/utc/participations/'.$promo
+                            'children' => [
+                                [
+                                    'label' => 'Codes',
+                                    'url' => config('laravel-admin.main_url').'/utc/codes/'.$promo
+                                ],
+                                [
+                                    'label' => 'Participations',
+                                    'url' => config('laravel-admin.main_url').'/utc/participations/'.$promo
+                                ],
+                                [
+                                    'label' => 'Draws',
+                                    'url' => config('laravel-admin.main_url').'/utc/draws/'.$promo
+                                ],
                             ],
-                            [
-                                'label' => 'Draws',
-                                'url' => config('laravel-admin.main_url').'/utc/draws/'.$promo
-                            ],
-                        ],
-                        'authorize' => [
+                            'authorize' => [
 
-                            [
-                                'view',
-                                new Promo( $info )
+                                [
+                                    'view',
+                                    new Promo( $info )
+                                ]
+
+    //                            \UnderTheCap\Participation::class
+    //                            \UnderTheCap\Promo::class
+    //                            Promo::find( $info['id'] )
                             ]
-
-//                            \UnderTheCap\Participation::class
-//                            \UnderTheCap\Promo::class
-//                            Promo::find( $info['id'] )
-                        ]
-                    ];
+                        ];
+                    }
                 }
             }
 
