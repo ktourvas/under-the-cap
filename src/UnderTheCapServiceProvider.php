@@ -94,9 +94,7 @@ class UnderTheCapServiceProvider extends ServiceProvider
 
         }
 
-        $UTCPromos = new Promos();
-
-        $this->app->instance('UnderTheCap\Promos', $UTCPromos);
+        $this->app->instance('UnderTheCap\Promos', new Promos());
 
         $this->app->register(EventServiceProvider::class);
 

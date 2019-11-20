@@ -8,41 +8,31 @@ use UnderTheCap\Promos;
 
 class Stats {
 
-    function __construct()
-    {
-    }
-
-    function __invoke()
-    {
+    function __invoke() {
         return $this->fetch();
     }
 
     protected function fetch() {
 
+        $this->promos = \App::make('UnderTheCap\Promos');
+
         $result = [];
 
-        $this->promos = new Promos();
+        foreach( $this->promos->promos() as $index => $promo ) {
 
-        foreach( config('under-the-cap') as $index => $promoInfo ) {
+            $this->promos->setCurrent($promo->slug());
 
-            if( $index != 'current' && !empty($promoInfo['participation_stats_table']) ) {
+            $stats = ParticipationsDay::orderBy('date', 'ASC')->get();
 
-                \App::make('UnderTheCap\Promos')->setCurrent($index);
-
-                config([ 'under-the-cap.current' => config('under-the-cap.'.$index) ]);
-
-                $stats = ParticipationsDay::orderBy('date', 'ASC')->get();
+            if($promo->status() == 'r' || $this->promos->promos()->count() == 1) {
 
                 $result[] = [
-                    'title' => $promoInfo['name'],
-
+                    'title' => $promo->info()['name'],
                     'type' => 'graph',
-
                     'width' => 'full',
-
                     'graph' => [
                         'type' => 'line',
-                        'source' => '/api/utc/stats/'.$promoInfo['slug'],
+                        'source' => '/api/utc/stats/'.$promo->slug(),
                         'data' => [
                             'x' => array_column($stats->toArray(), 'date'),
                             'y' => array_column($stats->toArray(), 'total'),
@@ -52,29 +42,21 @@ class Stats {
 
                 $result[] = [
                     'type' => 'number-tile',
-                    'title' => $promoInfo['name'].' - Participations total',
+                    'title' => $promo->info()['name'].' - Participations total',
                     'number' => Participation::count(),
-//                    'url' => 'utc/participations/exohi',
-                    'url' => config('laravel-admin.main_url').'/utc/participations/'.$index
+                    'url' => config('laravel-admin.main_url').'/utc/participations/'.$promo->slug()
                 ];
 
-                if($this->promos->promo($index)->status() == 'r') {
-
-                    $result[] = [
-                        'type' => 'number-tile',
-                        'title' => $promoInfo['name'].' - Participations today',
-                        'number' => Participation::whereDate('created_at', date('Y-m-d', time()))->count(),
-//                        'url' => 'utc/participations/exohi',
-                        'url' => config('laravel-admin.main_url').'/utc/participations/'.$index
-                    ];
-
-                }
-
-
+                $result[] = [
+                    'type' => 'number-tile',
+                    'title' => $promo->info()['name'].' - Participations today',
+                    'number' => Participation::whereDate('created_at', date('Y-m-d', time()))->count(),
+                    'url' => config('laravel-admin.main_url').'/utc/participations/'.$promo->slug()
+                ];
 
             }
-        }
 
+        }
         return $result;
     }
 

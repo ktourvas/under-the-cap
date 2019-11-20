@@ -19,17 +19,13 @@ class Promos {
     }
 
     public function promo($key) {
-
         return $this->promos->get($key);
-
     }
 
     public function setCurrent($slug) {
-
         if( $this->promos->has( $slug ) ) {
             $this->current = $slug;
         }
-
         return $slug == $this->current;
     }
 
@@ -40,11 +36,14 @@ class Promos {
      * @return mixed
      */
     public function current() {
-
         if( $this->promos->has( $this->current ) ) {
             return $this->promos->get($this->current);
         }
         return $this->promos->first();
+    }
+
+    public function promos() {
+        return $this->promos;
     }
 
 }
