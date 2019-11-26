@@ -4,6 +4,7 @@ namespace UnderTheCap\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use UnderTheCap\Entities\Present;
 use UnderTheCap\Participation;
 use UnderTheCap\Promo;
 use UnderTheCap\RedemptionCode;
@@ -19,6 +20,14 @@ class LaravelAdminController extends Controller {
             $this->promo = \App::make('UnderTheCap\Promos')->current();
         }
 
+    }
+
+    public function presents(Request $request, $promo) {
+        $presents = Present::orderBy('created_at', 'desc')->paginate('50');
+        return view('utc::admin.presents', [
+            'promo' => $this->promo,
+            'presents' => $presents
+        ]);
     }
 
     public function participations(Request $request, $promo) {

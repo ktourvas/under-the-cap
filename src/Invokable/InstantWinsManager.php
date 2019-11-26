@@ -11,9 +11,7 @@ use UnderTheCap\Promo;
 
 class InstantWinsManager {
 
-    function __construct()
-    {
-//        $this->promo = new Promo();
+    function __construct() {
         $this->promo = \App::make('UnderTheCap\Promos')->current();
     }
 

@@ -45,7 +45,8 @@ class UnderTheCapServiceProvider extends ServiceProvider
                 foreach(config('under-the-cap') as $promo => $info) {
 
                     if($promo !== 'current') {
-                        $appends[$promo] = [
+
+                        $append = [
                             'head' => [
                                 'label' => $info['name']
                             ],
@@ -57,24 +58,33 @@ class UnderTheCapServiceProvider extends ServiceProvider
                                 [
                                     'label' => 'Participations',
                                     'url' => config('laravel-admin.main_url').'/utc/participations/'.$promo
-                                ],
-                                [
-                                    'label' => 'Draws',
-                                    'url' => config('laravel-admin.main_url').'/utc/draws/'.$promo
-                                ],
+                                ]
                             ],
                             'authorize' => [
-
                                 [
                                     'view',
                                     new Promo( $info )
                                 ]
-
-    //                            \UnderTheCap\Participation::class
-    //                            \UnderTheCap\Promo::class
-    //                            Promo::find( $info['id'] )
                             ]
                         ];
+
+//                        'redemption_code_table' => 'motion_listenup_redemption_codes',
+                        if( !empty($info['redemption_code_table']) ) {
+                            $append['children'][] = [
+                                'label' => 'Draws',
+                                'url' => config('laravel-admin.main_url').'/utc/draws/'.$promo
+                            ];
+                        }
+
+                        if( !empty($info['draws']) ) {
+                            $append['children'][] = [
+                                'label' => 'Presents',
+                                'url' => config('laravel-admin.main_url').'/utc/presents/'.$promo
+                            ];
+                        }
+
+                        $appends[$promo] = $append;
+
                     }
                 }
             }

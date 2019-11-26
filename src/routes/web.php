@@ -33,6 +33,8 @@ Route::group([ 'middleware' => [ 'api' ] ], function () {
 
         Route::post('/api/utc/participations/{promo}/download', 'UnderTheCap\Http\Controllers\LaravelAdminController@download');
 
+        Route::post('/api/utc/presents/{present}', 'UnderTheCap\Http\Controllers\PresentsController@updatePresent');
+
     });
 
 });
@@ -57,5 +59,9 @@ Route::group([ 'middleware' =>
 
     Route::get(config('laravel-admin.root_url').'/utc/codes/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@codes')
         ->middleware('can:viewany,UnderTheCap\RedemptionCode');
+
+    Route::get(config('laravel-admin.root_url').'/utc/presents/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@presents')
+//        ->middleware('can:viewany,UnderTheCap\Present');
+    ;
 
 });
