@@ -23,7 +23,9 @@ class InstantWinsManager {
         $presents = $this->getPresents($id, $info, $participation);
         $status = $this->getStatus($id, $info);
 
-        if( $presents->count() == 0 || $status['wins'] >=  $info['max_daily_wins'] ) {
+        if( $presents->count() == 0 ||
+            $status['wins'] >=  $info['max_daily_wins']
+        ) {
             return false;
         }
 
@@ -33,6 +35,7 @@ class InstantWinsManager {
             $status['wins']++;
             $present = $presents->random();
             $present->total_given++;
+            $present->remaining > 0 ? $present->remaining-- : null;
             $present->save();
         }
 
@@ -97,12 +100,10 @@ class InstantWinsManager {
 
 //            'limit_presents_by' => 'totals', //totals, daily, dailytototals
             if($info['limit_presents_by'] == 'totals') {
-//                $q->where('total_give', '>', 'total_given');
                 $q->whereRaw('total_give > total_given');
             }
 
             if( $info['limit_presents_by'] == 'daily' ) {
-//                $this->promo->dayNumber();
                 $q->whereRaw('total_given < (daily_give*?)', [$this->promo->dayNumber()]);
             }
 
@@ -111,6 +112,10 @@ class InstantWinsManager {
                     ->whereRaw('total_given < (daily_give*?)', [$this->promo->dayNumber()])
                     ->whereRaw('total_given < total_give')
                 ;
+            }
+
+            if( $info['limit_presents_by'] == 'remaining' ) {
+                $q->whereRaw('remaining > 0');
             }
 
         })->get();
