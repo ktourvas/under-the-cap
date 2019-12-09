@@ -7,7 +7,7 @@ class RedemptionCode extends Model {
 
     public function __construct(array $attributes = [])
     {
-        $this->promo = \App::make('UnderTheCap\Promos')->current();
+        $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
 
         $this->table = $this->promo->info()['redemption_code_table'];
 
@@ -18,7 +18,7 @@ class RedemptionCode extends Model {
      * The Participation associated with the RedemptionCode
      */
     public function participation() {
-        return $this->hasOne('UnderTheCap\Participation', 'code_id');
+        return $this->hasOne('UnderTheCap\Entities\Participation', 'code_id');
     }
 
 }

@@ -5,8 +5,8 @@ namespace UnderTheCap\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use UnderTheCap\Entities\Present;
-use UnderTheCap\Participation;
-use UnderTheCap\Promo;
+use UnderTheCap\Entities\Participation;
+use UnderTheCap\Entities\Promo;
 use UnderTheCap\RedemptionCode;
 use UnderTheCap\Win;
 
@@ -16,8 +16,8 @@ class LaravelAdminController extends Controller {
     {
 
         if(!empty($request->promo)) {
-            \App::make('UnderTheCap\Promos')->setCurrent($request->promo);
-            $this->promo = \App::make('UnderTheCap\Promos')->current();
+            \App::make('UnderTheCap\Entities\Promos')->setCurrent($request->promo);
+            $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
         }
 
     }

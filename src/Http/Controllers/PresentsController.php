@@ -14,8 +14,8 @@ class PresentsController extends Controller {
     {
 
         if(!empty($request->promo)) {
-            \App::make('UnderTheCap\Promos')->setCurrent($request->promo);
-            $this->promo = \App::make('UnderTheCap\Promos')->current();
+            \App::make('UnderTheCap\Entities\Promos')->setCurrent($request->promo);
+            $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
         }
 
     }

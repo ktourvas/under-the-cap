@@ -1,6 +1,6 @@
 <?php
 
-namespace UnderTheCap;
+namespace UnderTheCap\Entities;
 
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Collection;

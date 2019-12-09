@@ -11,7 +11,7 @@ class PresentVariant extends Model {
 
     public function __construct(array $attributes = [])
     {
-        $this->promo = \App::make('UnderTheCap\Promos')->current();
+        $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
 
         $this->table = $this->promo->info()['participation_present_variants_table'] ?? 'present_variants';
 

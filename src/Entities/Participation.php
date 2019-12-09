@@ -1,6 +1,6 @@
 <?php
 
-namespace UnderTheCap;
+namespace UnderTheCap\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 
@@ -10,7 +10,7 @@ class Participation extends Model {
 
     public function __construct(array $attributes = [])
     {
-        $this->promo = App::make('UnderTheCap\Promos')->current();
+        $this->promo = App::make('UnderTheCap\Entities\Promos')->current();
         $this->table = $this->promo->info()['participation_table'];
         $this->fillable = array_merge(
             array_keys($this->promo->info()['participation_fields']),
@@ -27,14 +27,14 @@ class Participation extends Model {
      * The RedemptionCode associated with the Participation
      */
     public function redemptionCode() {
-        return $this->belongsTo('UnderTheCap\RedemptionCode', 'code_id');
+        return $this->belongsTo('UnderTheCap\Entities\RedemptionCode', 'code_id');
     }
 
     /**
      * The Wins associated with the Participation.
      */
     public function win() {
-        return $this->hasMany('UnderTheCap\Win', 'participation_id');
+        return $this->hasMany('UnderTheCap\Entities\Win', 'participation_id');
     }
 
     public function getDynamicField($field) {

@@ -4,8 +4,8 @@ namespace UnderTheCap\Invokable;
 
 use UnderTheCap\Entities\ParticipationsDay;
 use Carbon\CarbonPeriod;
-use UnderTheCap\Participation;
-use UnderTheCap\Promo;
+use UnderTheCap\Entities\Participation;
+use UnderTheCap\Entities\Promo;
 
 
 class DailyStats {
@@ -15,8 +15,7 @@ class DailyStats {
 
     }
 
-    function __invoke()
-    {
+    function __invoke() {
         $this->calc();
     }
 
@@ -24,11 +23,9 @@ class DailyStats {
 
         foreach( config('under-the-cap') as $index => $promoInfo ) {
 
-            echo "run " .$index;
+            \App::make('UnderTheCap\Entities\Promos')->setCurrent($index);
 
-            \App::make('UnderTheCap\Promos')->setCurrent($index);
-
-//            dd(\App::make('UnderTheCap\Promos')->current() );
+//            dd(\App::make('UnderTheCap\Entities\Promos')->current() );
 
             if( $index != 'current' && !empty($promoInfo['participation_stats_table']) ) {
 
@@ -36,12 +33,12 @@ class DailyStats {
 
                 $period = CarbonPeriod::create(
 
-                    date('Y-m-d', \App::make('UnderTheCap\Promos')->current()->info()['start_date']),
+                    date('Y-m-d', \App::make('UnderTheCap\Entities\Promos')->current()->info()['start_date']),
 
                     date('Y-m-d',
-                        \App::make('UnderTheCap\Promos')->current()->info()['end_date'] > (time() - 60 * 60 * 24) ?
+                        \App::make('UnderTheCap\Entities\Promos')->current()->info()['end_date'] > (time() - 60 * 60 * 24) ?
                         (time() - 60 * 60 * 24) :
-                            \App::make('UnderTheCap\Promos')->current()->info()['end_date']
+                            \App::make('UnderTheCap\Entities\Promos')->current()->info()['end_date']
                     )
                 );
 
@@ -51,8 +48,8 @@ class DailyStats {
                 $doneDates = array_column(
                     ParticipationsDay::whereBetween('date', [
 
-                        date('Y-m-d', \App::make('UnderTheCap\Promos')->current()->info()['start_date']),
-                        date('Y-m-d', \App::make('UnderTheCap\Promos')->current()->info()['end_date'])
+                        date('Y-m-d', \App::make('UnderTheCap\Entities\Promos')->current()->info()['start_date']),
+                        date('Y-m-d', \App::make('UnderTheCap\Entities\Promos')->current()->info()['end_date'])
 
                     ])->select('date')->get()->toArray()
                     , 'date'

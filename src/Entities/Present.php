@@ -11,7 +11,7 @@ class Present extends Model {
 
     public function __construct(array $attributes = [])
     {
-        $this->promo = \App::make('UnderTheCap\Promos')->current();
+        $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
 
         $this->table = $this->promo->info()['participation_presents_table'] ?? 'presents';
 
@@ -20,10 +20,6 @@ class Present extends Model {
 
     public function variants() {
         return $this->hasMany('UnderTheCap\Entities\PresentVariant', 'present_id');
-    }
-
-    public function wins() {
-        return $this->belongsToMany('UnderTheCap\Entities\Win')->using('UnderTheCap\Win');
     }
 
 }

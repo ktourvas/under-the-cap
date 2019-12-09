@@ -3,8 +3,8 @@
 namespace UnderTheCap\Invokable;
 
 use UnderTheCap\Entities\ParticipationsDay;
-use UnderTheCap\Participation;
-use UnderTheCap\Promos;
+use UnderTheCap\Entities\Participation;
+use UnderTheCap\Entities\Promos;
 
 class Stats {
 
@@ -14,7 +14,7 @@ class Stats {
 
     protected function fetch() {
 
-        $this->promos = \App::make('UnderTheCap\Promos');
+        $this->promos = \App::make('UnderTheCap\Entities\Promos');
 
         $result = [];
 

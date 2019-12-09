@@ -1,6 +1,7 @@
 <?php
 
-namespace UnderTheCap;
+namespace UnderTheCap\Entities;
+use UnderTheCap\Entities\Promo;
 
 class Promos {
 

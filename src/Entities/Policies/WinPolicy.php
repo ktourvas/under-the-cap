@@ -1,10 +1,10 @@
 <?php
 
-namespace UnderTheCap\Policies;
+namespace UnderTheCap\Entities\Policies;
 
 use App\User;
 use laravel\contacts\Contact;
-use UnderTheCap\Win;
+use UnderTheCap\Entities\Win;
 
 class WinPolicy
 {

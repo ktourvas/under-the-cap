@@ -1,16 +1,14 @@
 <?php
 
-namespace UnderTheCap\Policies;
+namespace UnderTheCap\Entities\Policies;
 
 use App\User;
-use UnderTheCap\Participation;
+use UnderTheCap\Entities\Participation;
 
 class ParticipationPolicy
 {
 
-    public function __construct() {
-
-    }
+    public function __construct() {}
 
     public function viewAny(User $user) {
         return $user->canViewAny(Participation::class);

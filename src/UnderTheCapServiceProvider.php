@@ -4,6 +4,8 @@ namespace UnderTheCap;
 
 use Illuminate\Support\ServiceProvider;
 use UnderTheCap\Providers\EventServiceProvider;
+use UnderTheCap\Entities\Promos;
+use UnderTheCap\Entities\Promo;
 
 class UnderTheCapServiceProvider extends ServiceProvider
 {
@@ -104,7 +106,7 @@ class UnderTheCapServiceProvider extends ServiceProvider
 
         }
 
-        $this->app->instance('UnderTheCap\Promos', new Promos());
+        $this->app->instance('UnderTheCap\Entities\Promos', new Promos());
 
         $this->app->register(EventServiceProvider::class);
 

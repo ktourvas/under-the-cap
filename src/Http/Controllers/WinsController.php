@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller;
 use phpDocumentor\Reflection\Types\String_;
 use UnderTheCap\Entities\Present;
 use UnderTheCap\Exceptions\PromoConfigurationException;
-use UnderTheCap\Participation;
-use UnderTheCap\Promo;
+use UnderTheCap\Entities\Participation;
+use UnderTheCap\Entities\Promo;
 use UnderTheCap\Win;
 use Carbon\Carbon;
 
@@ -20,8 +20,8 @@ class WinsController extends Controller {
     {
 
         if(!empty($request->promo)) {
-            \App::make('UnderTheCap\Promos')->setCurrent($request->promo);
-            $this->promo = \App::make('UnderTheCap\Promos')->current();
+            \App::make('UnderTheCap\Entities\Promos')->setCurrent($request->promo);
+            $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
         }
 
     }

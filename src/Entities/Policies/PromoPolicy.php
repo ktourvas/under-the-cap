@@ -1,9 +1,9 @@
 <?php
 
-namespace UnderTheCap\Policies;
+namespace UnderTheCap\Entities\Policies;
 
 use App\User;
-use UnderTheCap\Promo;
+use UnderTheCap\Entities\Promo;
 
 class PromoPolicy
 {

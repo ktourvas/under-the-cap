@@ -1,10 +1,9 @@
 <?php
 
-namespace UnderTheCap\Policies;
+namespace UnderTheCap\Entities\Policies;
 
 use App\User;
-use UnderTheCap\Participation;
-use UnderTheCap\RedemptionCode;
+use UnderTheCap\Entities\RedemptionCode;
 
 class RedemptionCodePolicy
 {

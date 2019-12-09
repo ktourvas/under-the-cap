@@ -52,16 +52,16 @@ Route::group([ 'middleware' =>
 ], function () {
 
     Route::get(config('laravel-admin.root_url').'/utc/participations/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@participations')
-        ->middleware('can:viewany,UnderTheCap\Participation');
+        ->middleware('can:viewany,UnderTheCap\Entities\Participation');
 
     Route::get(config('laravel-admin.root_url').'/utc/draws/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@draws')
-        ->middleware('can:viewany,UnderTheCap\Win');
+        ->middleware('can:viewany,UnderTheCap\Entities\Win');
 
     Route::get(config('laravel-admin.root_url').'/utc/codes/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@codes')
-        ->middleware('can:viewany,UnderTheCap\RedemptionCode');
+        ->middleware('can:viewany,UnderTheCap\Entities\RedemptionCode');
 
     Route::get(config('laravel-admin.root_url').'/utc/presents/{promo}', 'UnderTheCap\Http\Controllers\LaravelAdminController@presents')
-//        ->middleware('can:viewany,UnderTheCap\Present');
+        ->middleware('can:viewany,UnderTheCap\Entities\Present');
     ;
 
 });

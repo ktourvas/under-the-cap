@@ -1,6 +1,6 @@
 <?php
 
-namespace UnderTheCap;
+namespace UnderTheCap\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 
@@ -16,12 +16,9 @@ class Win extends Model {
 
     public function __construct( $attributes = [] )
     {
-        $this->promo = App::make('UnderTheCap\Promos')->current();
+        $this->promo = App::make('UnderTheCap\Entities\Promos')->current();
 
         $this->table = $this->promo->info()['wins_table'];
-//        $this->table = config('under-the-cap.current.wins_table');
-
-//        $this->promo = App::make('UnderTheCap\Promo');
 
         parent::__construct($attributes);
     }
@@ -47,7 +44,7 @@ class Win extends Model {
      * The Participation associated with the Win
      */
     public function participation() {
-        return $this->belongsTo('UnderTheCap\Participation', 'participation_id');
+        return $this->belongsTo('UnderTheCap\Entities\Participation', 'participation_id');
     }
 
     /**

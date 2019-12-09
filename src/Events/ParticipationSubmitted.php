@@ -3,7 +3,7 @@
 namespace UnderTheCap\Events;
 
 use Illuminate\Queue\SerializesModels;
-use UnderTheCap\Participation;
+use UnderTheCap\Entities\Participation;
 
 class ParticipationSubmitted
 {
@@ -14,7 +14,7 @@ class ParticipationSubmitted
     /**
      * Create a new event instance.
      *
-     * @param  \UnderTheCap\Participation $participation
+     * @param  \UnderTheCap\Entities\Participation $participation
      * @return void
      */
     public function __construct(Participation $participation)
