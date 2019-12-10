@@ -5,9 +5,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Present extends Model {
 
-    protected $fillable = [ 'date', 'draw_id', 'daily_give', 'total_give', 'total_given' ];
+    protected $fillable = [ 'date', 'draw_id', 'daily_give', 'total_give', 'total_given', 'remaining' ];
 
-    protected $hidden = [ 'draw_id', 'daily_give', 'daily_given', 'track', 'total_give', 'total_given' ];
+    protected $hidden = [ 'draw_id', 'daily_give', 'daily_given', 'track', 'total_give', 'total_given', 'remaining' ];
 
     public function __construct(array $attributes = [])
     {

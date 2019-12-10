@@ -23,7 +23,8 @@ class PresentsController extends Controller {
     public function updatePresent(Request $request, Present $present) {
         return [ 'success' => $present->update([
             'daily_give' => $request->daily_give,
-            'total_give' => $request->total_give
+            'total_give' => $request->total_give,
+            'remaining' => $request->remaining
         ])
         ];
     }

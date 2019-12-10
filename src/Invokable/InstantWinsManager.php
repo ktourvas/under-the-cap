@@ -21,6 +21,7 @@ class InstantWinsManager {
         // Pull the available presents. If wins are not related to specific presents use one generic present item
         // with the total of wins expected
         $presents = $this->getPresents($id, $info, $participation);
+
         $status = $this->getStatus($id, $info);
 
         if( $presents->count() == 0 ||
@@ -98,7 +99,6 @@ class InstantWinsManager {
                 }
             }
 
-//            'limit_presents_by' => 'totals', //totals, daily, dailytototals
             if($info['limit_presents_by'] == 'totals') {
                 $q->whereRaw('total_give > total_given');
             }

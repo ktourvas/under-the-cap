@@ -10,61 +10,50 @@
     </nav>
 
     @if($presents->count() > 0)
+
         <div class="tile is-ancestor">
 
-            <div class="tile is-parent">
-                @foreach($presents as $present)
+            @foreach($presents as $index => $present)
 
-                    <f-post inline-template action="/api/utc/presents/{{ $present->id }}">
+                @if( $index > 0 && $index % 4 === 0 )
+        </div>
+        <div class="tile is-ancestor">
+            @endif
 
-                        <div class="tile">
-
-                            <div class="card">
-                                <header class="card-header">
-                                    <p class="card-header-title">
-                                        {{ $present->title }}
-                                    </p>
-                                    <p class="card-header-icon">
-                                        Σύνολο δοθέντων:  {{ $present->total_given }}
-                                    </p>
-                                </header>
-
-                                <div class="card-content">
-                                    <div class="content">
-                                        <div class="field">
-                                            <label class="label">
-                                                Ημερήσιο σύνολο
-                                            </label>
-                                            <input class="input is-danger" type="text" placeholder="Ημερήσιο σύνολο" value="{{ $present->daily_give }}" name="daily_give" ref="daily_give">
-                                        </div>
-                                        <div class="field">
-                                            <label class="label">
-                                                Γενικό σύνολο
-                                            </label>
-                                            <input class="input is-danger" type="text" placeholder="Ημερήσιο σύνολο" value="{{ $present->total_give }}" name="total_give" ref="total_give">
-                                        </div>
-                                        {{--                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec iaculis mauris.--}}
-                                        {{--                                <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>--}}
-                                        {{--                                <br>--}}
-                                        {{--                                <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>--}}
+            <f-post inline-template action="/api/utc/presents/{{ $present->id }}">
+                <div class="tile is-parent">
+                    <div class="tile is-child">
+                        <div class="card">
+                            <header class="card-header">
+                                <p class="card-header-title">{{ $present->title }}</p>
+                                <p class="card-header-icon">Total given:  {{ $present->total_given }}</p>
+                            </header>
+                            <div class="card-content">
+                                <div class="content">
+                                    <div class="field">
+                                        <label class="label">Daily limit</label>
+                                        <input class="input is-danger" type="text" placeholder="Daily limit" value="{{ $present->daily_give }}" name="daily_give" ref="daily_give">
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Overall limit</label>
+                                        <input class="input is-danger" type="text" placeholder="Overall limit" value="{{ $present->total_give }}" name="total_give" ref="total_give">
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Remaining</label>
+                                        <input class="input is-danger" type="text" placeholder="Remaining" value="{{ $present->remaining }}" name="total_give" ref="remaining">
                                     </div>
                                 </div>
-                                <footer class="card-footer">
-                                    <a href="#" class="card-footer-item" @click="onSubmit">
-                                        Update
-                                    </a>
-                                    {{--                            <a href="#" class="card-footer-item">Edit</a>--}}
-                                    {{--                            <a href="#" class="card-footer-item">Delete</a>--}}
-                                </footer>
                             </div>
-
+                            <footer class="card-footer">
+                                <a href="#" class="card-footer-item" @click="onSubmit">Update</a>
+                            </footer>
                         </div>
-
-                    </f-post>
-                @endforeach
-            </div>
-
+                    </div>
+                </div>
+            </f-post>
+            @endforeach
         </div>
+
     @endif
 
     {{ $presents->links('mma::partials.pagination') }}
