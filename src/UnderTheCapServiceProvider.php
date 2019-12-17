@@ -54,12 +54,12 @@ class UnderTheCapServiceProvider extends ServiceProvider
                             ],
                             'children' => [
                                 [
-                                    'label' => 'Codes',
-                                    'url' => config('laravel-admin.main_url').'/utc/codes/'.$promo
-                                ],
-                                [
                                     'label' => 'Participations',
                                     'url' => config('laravel-admin.main_url').'/utc/participations/'.$promo
+                                ],
+                                [
+                                    'label' => 'Presents',
+                                    'url' => config('laravel-admin.main_url').'/utc/presents/'.$promo
                                 ]
                             ],
                             'authorize' => [
@@ -73,15 +73,15 @@ class UnderTheCapServiceProvider extends ServiceProvider
 //                        'redemption_code_table' => 'motion_listenup_redemption_codes',
                         if( !empty($info['redemption_code_table']) ) {
                             $append['children'][] = [
-                                'label' => 'Draws',
-                                'url' => config('laravel-admin.main_url').'/utc/draws/'.$promo
+                                'label' => 'Codes',
+                                'url' => config('laravel-admin.main_url').'/utc/codes/'.$promo
                             ];
                         }
 
                         if( !empty($info['draws']) ) {
                             $append['children'][] = [
-                                'label' => 'Presents',
-                                'url' => config('laravel-admin.main_url').'/utc/presents/'.$promo
+                                'label' => 'Draws',
+                                'url' => config('laravel-admin.main_url').'/utc/draws/'.$promo
                             ];
                         }
 

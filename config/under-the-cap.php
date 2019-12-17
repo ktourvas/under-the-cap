@@ -191,7 +191,7 @@ return [
                 //presents
                 'limit_presents_by' => 'totals', //totals, daily
 
-                'mailable' => 'mrm\cc3e\amitamotion\Mail\InstantWin',
+                'mailable' => 'MailClass',
                 'auto_approved' => true
 
             ],
