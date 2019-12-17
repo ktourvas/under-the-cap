@@ -81,7 +81,7 @@ class WinsController extends Controller {
          * and replaced by proper cascading relationship in DB
          */
 
-        $win->winpresent->delete();
+        $win->winpresent()->delete();
 
         return [
             'success' => $win->delete()
