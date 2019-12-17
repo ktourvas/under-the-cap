@@ -9,7 +9,7 @@ use UnderTheCap\Entities\Present;
 use UnderTheCap\Exceptions\PromoConfigurationException;
 use UnderTheCap\Entities\Participation;
 use UnderTheCap\Entities\Promo;
-use UnderTheCap\Win;
+use UnderTheCap\Entities\Win;
 use Carbon\Carbon;
 
 class WinsController extends Controller {

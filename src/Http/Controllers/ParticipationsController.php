@@ -11,8 +11,8 @@ use UnderTheCap\Exceptions\RedemptionCodeException;
 use UnderTheCap\Invokable\InstantWinsManager;
 use UnderTheCap\Entities\Participation;
 use UnderTheCap\Entities\Promo;
-use UnderTheCap\RedemptionCode;
-use UnderTheCap\Win;
+use UnderTheCap\Entities\RedemptionCode;
+use UnderTheCap\Entities\Win;
 
 class ParticipationsController extends Controller {
 

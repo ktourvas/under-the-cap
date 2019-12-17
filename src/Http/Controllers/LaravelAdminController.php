@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use UnderTheCap\Entities\Present;
 use UnderTheCap\Entities\Participation;
 use UnderTheCap\Entities\Promo;
-use UnderTheCap\RedemptionCode;
+use UnderTheCap\Entities\RedemptionCode;
 use UnderTheCap\Entities\Win;
 
 class LaravelAdminController extends Controller {
