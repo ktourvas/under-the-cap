@@ -24,21 +24,28 @@ class Stats {
 
             $stats = ParticipationsDay::orderBy('date', 'ASC')->get();
 
-            if($promo->status() == 'r' || $this->promos->promos()->count() == 1) {
-
-                $result[] = [
-                    'title' => $promo->info()['name'],
-                    'type' => 'graph',
-                    'width' => 'full',
-                    'graph' => [
-                        'type' => 'line',
-                        'source' => '/api/utc/stats/'.$promo->slug(),
-                        'data' => [
-                            'x' => array_column($stats->toArray(), 'date'),
-                            'y' => array_column($stats->toArray(), 'total'),
-                        ]
+            $result[] = [
+                'title' => $promo->info()['name'],
+                'type' => 'graph',
+                'width' => 'full',
+                'graph' => [
+                    'type' => 'line',
+                    'source' => '/api/utc/stats/'.$promo->slug(),
+                    'data' => [
+                        'x' => array_column($stats->toArray(), 'date'),
+                        'y' => array_column($stats->toArray(), 'total'),
                     ]
-                ];
+                ],
+                'actions' => [
+                    'update_daily' => [
+                        'label' => 'Update Latest Stats',
+                        'method' => 'post',
+                        'endpoint' => '/api/utc/stats/'.$promo->slug()
+                    ]
+                ]
+            ];
+
+            if($promo->status() == 'r' || $this->promos->promos()->count() == 1) {
 
                 $result[] = [
                     'type' => 'number-tile',

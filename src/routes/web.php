@@ -35,6 +35,8 @@ Route::group([ 'middleware' => [ 'api' ] ], function () {
 
         Route::post('/api/utc/presents/{present}', 'UnderTheCap\Http\Controllers\PresentsController@updatePresent');
 
+        Route::post('/api/utc/stats/{promo}', 'UnderTheCap\Http\Controllers\StatsController@updateDaily');
+
     });
 
 });
