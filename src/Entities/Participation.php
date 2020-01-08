@@ -10,7 +10,7 @@ class Participation extends Model {
 
     public function __construct(array $attributes = [])
     {
-        $this->promo = App::make('UnderTheCap\Entities\Promos')->current();
+        $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
         $this->table = $this->promo->info()['participation_table'];
         $this->fillable = array_merge(
             array_keys($this->promo->info()['participation_fields']),

@@ -14,13 +14,11 @@ class Stats {
 
     protected function fetch() {
 
-        $this->promos = \App::make('UnderTheCap\Entities\Promos');
-
         $result = [];
 
-        foreach( $this->promos->promos() as $index => $promo ) {
+        foreach( \App::make('UnderTheCap\Entities\Promos')->promos() as $index => $promo ) {
 
-            $this->promos->setCurrent($promo->slug());
+            \App::make('UnderTheCap\Entities\Promos')->setCurrent($index);
 
             $stats = ParticipationsDay::orderBy('date', 'ASC')->get();
 
@@ -45,7 +43,7 @@ class Stats {
                 ]
             ];
 
-            if($promo->status() == 'r' || $this->promos->promos()->count() == 1) {
+            if($promo->status() == 'r' || \App::make('UnderTheCap\Entities\Promos')->promos()->count() == 1) {
 
                 $result[] = [
                     'type' => 'number-tile',
