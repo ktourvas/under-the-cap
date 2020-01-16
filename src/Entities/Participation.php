@@ -3,8 +3,11 @@
 namespace UnderTheCap\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
+use Illuminate\Notifications\Notifiable;
 
 class Participation extends Model {
+
+    use Notifiable;
 
     protected $promo, $attributted_fields;
 
@@ -53,8 +56,22 @@ class Participation extends Model {
 
     }
 
-
     public function getpromoattribute() {
         return $this->promo;
+    }
+
+    /**
+     * Route notifications for the mail channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return array|string
+     */
+    public function routeNotificationForMail($notification)
+    {
+        // Return email address only...
+        return $this->email;
+
+        // Return name and email address...
+//        return [$this->email_address => $this->name];
     }
 }
