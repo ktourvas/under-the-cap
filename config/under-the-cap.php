@@ -192,6 +192,10 @@ return [
                 'limit_presents_by' => 'totals', //totals, daily
 
                 'mailable' => 'MailClass',
+
+                'notification' => 'NotificationClass',
+                'testnotificationsrecepient' => 'youremailaddress',
+
                 'auto_approved' => true
 
             ],

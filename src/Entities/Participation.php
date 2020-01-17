@@ -68,10 +68,9 @@ class Participation extends Model {
      */
     public function routeNotificationForMail($notification)
     {
-        // Return email address only...
-        return $this->email;
+        $draw = $this->promo->draw($this->win[0]->type_id);
 
-        // Return name and email address...
-//        return [$this->email_address => $this->name];
+        return \App::environment('production') ? $this->email : $draw['testnotificationsrecepient'];
+
     }
 }

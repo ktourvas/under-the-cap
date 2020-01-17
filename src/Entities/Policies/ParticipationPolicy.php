@@ -19,7 +19,7 @@ class ParticipationPolicy
     }
 
     public function create(User $user) {
-        return $user->canDelete( Participation::class );
+        return $user->canCreate( Participation::class );
     }
 
     public function update(User $user, Participation $participation) {

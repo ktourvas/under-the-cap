@@ -28,12 +28,22 @@ class InstantWinDraw
             if($event->participation->win()->exists()) {
                 $draw = $event->participation->promo->draw($event->participation->win[0]->type_id);
                 if( !empty($draw) ) {
+
+                    //Using mailable
                     if( !empty($draw['mailable']) ) {
                         \Mail::to(
-                            \App::environment('production') ? $event->participation->email : 'kostas.tourvas@mrm-mccann.gr'
+                            \App::environment('production') ? $event->participation->email : $draw['testnotificationsrecepient']
                         )
                             ->send(new $draw['mailable']($event->participation));
                     }
+
+                    //Using notifiable trait
+                    if( !empty($draw['notification']) ) {
+                        $event->participation->notify(
+                            new $draw['notification']()
+                        );
+                    }
+
                 }
             }
         }
