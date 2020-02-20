@@ -137,6 +137,14 @@ return [
 
         'wins_table' => 'utc_wins',
 
+        'participation_presents_table' => 'utc_presents',
+
+        'participation_present_variants_table' => 'utc_present_variants',
+
+        'participation_win_presents_table' => 'utc_win_presents',
+
+
+
         /*
         |--------------------------------------------------------------------------
         | The types of draws defined for the promo
@@ -200,7 +208,9 @@ return [
 
             ],
 
-        ]
+        ],
+
+        'participation_stats_table' => 'utc_participation_stats'
     ]
 
 ];
