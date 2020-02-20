@@ -40,7 +40,7 @@ class InstantWinDraw
                     //Using notifiable trait
                     if( !empty($draw['notification']) ) {
                         $event->participation->notify(
-                            new $draw['notification']()
+                            new $draw['notification']( $event->participation )
                         );
                     }
 
