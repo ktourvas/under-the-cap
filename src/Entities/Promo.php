@@ -15,7 +15,7 @@ class Promo extends Model {
 
     public function __construct($info = null)
     {
-        $this->id = $info['id'] ?? 0;
+        $this->id = !empty($info['id']) ? $info['id'] : 0;
 
         $this->info = $info;
         if( empty($this->info) ) {

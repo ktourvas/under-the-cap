@@ -1,6 +1,6 @@
 <?php
 
-namespace UnderTheCap;
+namespace UnderTheCap\Entities;
 use Illuminate\Database\Eloquent\Model;
 
 class RedemptionCode extends Model {

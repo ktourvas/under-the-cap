@@ -13,7 +13,7 @@ class Present extends Model {
     {
         $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
 
-        $this->table = $this->promo->info()['participation_presents_table'] ?? 'presents';
+        $this->table = !empty($this->promo->info()['participation_presents_table']) ? $this->promo->info()['participation_presents_table'] : 'presents';
 
         parent::__construct($attributes);
     }

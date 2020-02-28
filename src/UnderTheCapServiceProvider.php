@@ -3,12 +3,30 @@
 namespace UnderTheCap;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use UnderTheCap\Entities\Participation;
+use UnderTheCap\Entities\Policies\ParticipationPolicy;
+use UnderTheCap\Entities\Policies\PresentPolicy;
+use UnderTheCap\Entities\Policies\PromoPolicy;
+use UnderTheCap\Entities\Policies\RedemptionCodePolicy;
+use UnderTheCap\Entities\Policies\WinPolicy;
+use UnderTheCap\Entities\Present;
+use UnderTheCap\Entities\RedemptionCode;
+use UnderTheCap\Entities\Win;
 use UnderTheCap\Providers\EventServiceProvider;
 use UnderTheCap\Entities\Promos;
 use UnderTheCap\Entities\Promo;
 
 class UnderTheCapServiceProvider extends ServiceProvider
 {
+
+    protected $policies = [
+        Promo::class => PromoPolicy::class,
+        Participation::class => ParticipationPolicy::class,
+        Present::class => PresentPolicy::class,
+        RedemptionCode::class => RedemptionCodePolicy::class,
+        Win::class => WinPolicy::class
+    ];
 
     /**
      * Boot the service provider.
@@ -30,6 +48,8 @@ class UnderTheCapServiceProvider extends ServiceProvider
             __DIR__.'/../config/under-the-cap.php' => config_path('under-the-cap.php'),
         ]);
 
+        $this->registerPolicies();
+
     }
 
     /**
@@ -44,6 +64,7 @@ class UnderTheCapServiceProvider extends ServiceProvider
             $appends = [];
 
             if( config('under-the-cap') !== null ) {
+
                 foreach(config('under-the-cap') as $promo => $info) {
 
                     if($promo !== 'current') {
@@ -122,5 +143,14 @@ class UnderTheCapServiceProvider extends ServiceProvider
         return [
             'UnderTheCap\Providers\EventServiceProvider'
         ];
+    }
+
+    private function registerPolicies() {
+        if( intval( explode( ".", $this->app->version() )[0]) >= 5 ||
+            intval(explode( ".", $this->app->version() )[1] ) >= 8  ) {
+            foreach ($this->policies as $key => $value) {
+                Gate::policy($key, $value);
+            }
+        }
     }
 }
