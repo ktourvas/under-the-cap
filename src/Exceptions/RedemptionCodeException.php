@@ -8,26 +8,6 @@ use Illuminate\Support\Facades\Validator as ValidatorFacade;
 
 class RedemptionCodeException extends Exception
 {
-    /**
-     * The promotion instance.
-     *
-     * @var \UnderTheCap\Promo
-     */
-    public $promo;
-
-    /**
-     * Create a new exception instance.
-     *
-     * @param  \Symfony\Component\HttpFoundation\Response  $response
-     * @param  string  $errorBag
-     * @return void
-     */
-    public function __construct($promo)
-    {
-        parent::__construct('The given data was invalid.');
-
-        $this->promo = $promo;
-    }
 
     /**
      * Get all of the validation error messages.

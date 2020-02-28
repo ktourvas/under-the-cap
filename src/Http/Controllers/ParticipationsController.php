@@ -22,9 +22,9 @@ class ParticipationsController extends Controller {
     {
         if(!empty($request->utc_env)) {
             \App::make('UnderTheCap\Entities\Promos')->setCurrent($request->utc_env);
+
             $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
         }
-
     }
 
     public function submitCode(Request $request) {
@@ -49,7 +49,7 @@ class ParticipationsController extends Controller {
         if( $submissionType == 'redemption' && !empty($request->code) ) {
             $code = $this->getRedemptionCode($request->code);
             if(empty($code)) {
-                throw new RedemptionCodeException($this->promo);
+                throw new RedemptionCodeException();
             }
         }
 
@@ -75,7 +75,11 @@ class ParticipationsController extends Controller {
      * @return mixed
      */
     public function getRedemptionCode(String $code) {
-        return RedemptionCode::where('code', $code)->whereDoesntHave('participation')->first();
+
+        return RedemptionCode::where('code', $code)->where(function($q) {
+            $q->whereDoesntHave('participation')->orWhere('reusable', 1);
+        })->first();
+
     }
 
     /**
