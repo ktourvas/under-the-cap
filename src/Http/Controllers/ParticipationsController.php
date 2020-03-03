@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
 use UnderTheCap\Entities\WinPresent;
 use UnderTheCap\Events\ParticipationSubmitted;
+use UnderTheCap\Exceptions\ParticipationRestrictionException;
 use UnderTheCap\Exceptions\RedemptionCodeException;
 use UnderTheCap\Invokable\InstantWinsManager;
 use UnderTheCap\Entities\Participation;
@@ -43,6 +44,44 @@ class ParticipationsController extends Controller {
             $this->promo->participationValidationRules()->toArray(),
             $this->promo->participationValidationMessages()->toArray()
         );
+
+        /**
+         * In the case that participation restrictions have been imposed, check if the submitted can information
+         * can create a new participation.
+         */
+
+        if( !empty( $this->promo['participation_restrictions'] ) ) {
+
+            $count = Participation::where(function($q) use ($request) {
+                foreach ($this->promo['participation_restrictions']['identify_by'] as $identifier) {
+                    $q->where( $identifier, $request->get($identifier) );
+                }
+            })
+                ->where(function($q) {
+                    if( $this->promo['participation_restrictions']['allowed_frequency'] == 'daily') {
+                        $q->whereDate( date('Y-m-d') );
+                    }
+                })
+                ->count();
+
+            if($count >= $this->promo['participation_restrictions']['allowed_number'] ) {
+                throw new ParticipationRestrictionException([
+                    'errors' => [
+                        $this->promo['participation_restrictions']['identify_by'][0] => [
+                            'The email submitted is already associated with a participation.'
+                        ]
+                    ]
+                ]);
+            }
+
+//            'participation_restrictions' => [
+//                'allowed_frequeny' => 'daily',
+//                'allowed_number' => 1,
+//                'identify_by' => [
+//                    'email'
+//                ],
+//            ],
+        }
 
         // If the submission type includes code redemption, validate the code of the submission
         $code = null;

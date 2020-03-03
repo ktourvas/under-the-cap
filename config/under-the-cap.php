@@ -123,6 +123,14 @@ return [
 
         ],
 
+        'participation_restrictions' => [
+            'allowed_frequeny' => 'daily',
+            'allowed_number' => 1,
+            'identify_by' => [
+                'email'
+            ],
+        ],
+
         /*
         |--------------------------------------------------------------------------
         | RedemptionCode table name
