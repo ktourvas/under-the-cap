@@ -15,10 +15,8 @@ class ParticipationRestrictionException extends Exception
      */
     public function error()
     {
-        if(!empty( $this->message )) {
-            return $this->message;
-        }
         return [
+            'error' => 'participation_restriction',
             'errors' => [
                 'email' => [
                     'The email submitted is already associated with a participation.'

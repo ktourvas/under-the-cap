@@ -124,7 +124,7 @@ return [
         ],
 
         'participation_restrictions' => [
-            'allowed_frequeny' => 'daily',
+            'allowed_frequency' => 'daily',
             'allowed_number' => 1,
             'identify_by' => [
                 'email'

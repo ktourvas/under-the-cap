@@ -50,28 +50,22 @@ class ParticipationsController extends Controller {
          * can create a new participation.
          */
 
-        if( !empty( $this->promo['participation_restrictions'] ) ) {
+        if( !empty( $this->promo['info']['participation_restrictions'] ) ) {
 
             $count = Participation::where(function($q) use ($request) {
-                foreach ($this->promo['participation_restrictions']['identify_by'] as $identifier) {
+                foreach ($this->promo['info']['participation_restrictions']['identify_by'] as $identifier) {
                     $q->where( $identifier, $request->get($identifier) );
                 }
             })
                 ->where(function($q) {
-                    if( $this->promo['participation_restrictions']['allowed_frequency'] == 'daily') {
-                        $q->whereDate( date('Y-m-d') );
+                    if( $this->promo['info']['participation_restrictions']['allowed_frequency'] == 'daily') {
+                        $q->whereDate( 'created_at', date('Y-m-d') );
                     }
                 })
                 ->count();
 
-            if($count >= $this->promo['participation_restrictions']['allowed_number'] ) {
-                throw new ParticipationRestrictionException([
-                    'errors' => [
-                        $this->promo['participation_restrictions']['identify_by'][0] => [
-                            'The email submitted is already associated with a participation.'
-                        ]
-                    ]
-                ]);
+            if($count >= $this->promo['info']['participation_restrictions']['allowed_number'] ) {
+                throw new ParticipationRestrictionException();
             }
 
 //            'participation_restrictions' => [
