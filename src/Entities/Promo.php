@@ -69,7 +69,7 @@ class Promo extends Model {
      * @return int
      */
     public function dayNumber($zerobased = false) {
-        return $this->period->getStartDate()->setHour('0')->diffInDays(Carbon::now()) + ($zerobased ? 0 : 1);
+        return $this->period->getStartDate()->startOfDay()->diffInDays(Carbon::now()) + ($zerobased ? 0 : 1);
     }
 
     /**
