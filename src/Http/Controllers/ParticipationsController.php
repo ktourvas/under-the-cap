@@ -107,7 +107,7 @@ class ParticipationsController extends Controller {
      * @param $code
      * @return mixed
      */
-    public function getRedemptionCode(string $code) {
+    public function getRedemptionCode($code) {
 
         return RedemptionCode::where('code', $code)->where(function($q) {
             $q->whereDoesntHave('participation')->orWhere('reusable', 1);
