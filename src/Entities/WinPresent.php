@@ -14,7 +14,7 @@ class WinPresent extends Model {
     {
         $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
 
-        $this->table = $this->promo->info()['participation_win_presents_table'] ?? 'win_presents';
+        $this->table = !empty($this->promo->info()['participation_win_presents_table']) ? $this->promo->info()['participation_win_presents_table'] : 'win_presents';
 
         parent::__construct($attributes);
     }
