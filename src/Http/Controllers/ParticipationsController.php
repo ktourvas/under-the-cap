@@ -90,16 +90,14 @@ class ParticipationsController extends Controller {
                 ->orWhere(function($q) use ($info, $request) {
                     $q->where('reusable', 1);
                     if( !empty($info['participation_restrictions'])
-                        && $info['participation_restrictions']['allow_frequency'] == 'daily_reusable_code' ) {
+                        && $info['participation_restrictions']['allowed_frequency'] == 'daily_reusable_code' ) {
                         $q->whereDoesntHave('participation', function($q) use ($info, $request) {
 //                            $q->where('emai');
                             foreach ($info['participation_restrictions']['identify_by'] as $identifier) {
                                 $q->where( $identifier, $request->get($identifier) );
                             }
 
-                            if( $info['participation_restrictions']['allowed_frequency'] == 'daily') {
-                                $q->whereDate( 'created_at', date('Y-m-d') );
-                            }
+                            $q->whereDate( 'created_at', date('Y-m-d') );
 
                         });
                     }
