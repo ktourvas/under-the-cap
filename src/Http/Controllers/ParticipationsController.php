@@ -49,38 +49,12 @@ class ParticipationsController extends Controller {
          * In the case that participation restrictions have been imposed, check if the submitted can information
          * can create a new participation.
          */
-
-        if( !empty( $this->promo['info']['participation_restrictions'] ) ) {
-
-            $count = Participation::where(function($q) use ($request) {
-                foreach ($this->promo['info']['participation_restrictions']['identify_by'] as $identifier) {
-                    $q->where( $identifier, $request->get($identifier) );
-                }
-            })
-                ->where(function($q) {
-                    if( $this->promo['info']['participation_restrictions']['allowed_frequency'] == 'daily') {
-                        $q->whereDate( 'created_at', date('Y-m-d') );
-                    }
-                })
-                ->count();
-
-            if($count >= $this->promo['info']['participation_restrictions']['allowed_number'] ) {
-                throw new ParticipationRestrictionException();
-            }
-
-//            'participation_restrictions' => [
-//                'allowed_frequeny' => 'daily',
-//                'allowed_number' => 1,
-//                'identify_by' => [
-//                    'email'
-//                ],
-//            ],
-        }
+        $this->validateRestrictions($request, $this->promo['info']);
 
         // If the submission type includes code redemption, validate the code of the submission
         $code = null;
         if( $submissionType == 'redemption' && !empty($request->code) ) {
-            $code = $this->getRedemptionCode($request->code);
+            $code = $this->getRedemptionCode($request->code, $request, $this->promo['info']);
             if(empty($code)) {
                 throw new RedemptionCodeException();
             }
@@ -107,12 +81,58 @@ class ParticipationsController extends Controller {
      * @param $code
      * @return mixed
      */
-    public function getRedemptionCode($code) {
+    public function getRedemptionCode($code, $request, $info) {
 
-        return RedemptionCode::where('code', $code)->where(function($q) {
-            $q->whereDoesntHave('participation')->orWhere('reusable', 1);
+        return RedemptionCode::where('code', $code)->where(function($q) use ($info, $request) {
+
+            $q->whereDoesntHave('participation')
+//                ->orWhere('reusable', 1)
+                ->orWhere(function($q) use ($info, $request) {
+                    $q->where('reusable', 1);
+                    if( !empty($info['participation_restrictions'])
+                        && $info['participation_restrictions']['allowed_frequency'] == 'daily_reusable_code' ) {
+                        $q->whereDoesntHave('participation', function($q) use ($info, $request) {
+//                            $q->where('emai');
+                            foreach ($info['participation_restrictions']['identify_by'] as $identifier) {
+                                $q->where( $identifier, $request->get($identifier) );
+                            }
+
+                            $q->whereDate( 'created_at', date('Y-m-d') );
+
+                        });
+                    }
+                })
+            ;
+
         })->first();
 
+    }
+
+    /**
+     * @param $request
+     * @param $info
+     * @throws ParticipationRestrictionException
+     */
+    public function validateRestrictions( $request, $info ) {
+        if( !empty( $info['participation_restrictions'] ) ) {
+            $count = 0;
+            if($info['participation_restrictions']['allowed_frequency'] == 'daily') {
+                $count = Participation::where(function($q) use ($request, $info) {
+                    foreach ($info['participation_restrictions']['identify_by'] as $identifier) {
+                        $q->where( $identifier, $request->get($identifier) );
+                    }
+                })
+                    ->where(function($q) {
+                        $q->whereDate( 'created_at', date('Y-m-d') );
+                    })
+                    ->count();
+            }
+
+            if($count >= $info['participation_restrictions']['allowed_number'] ) {
+                throw new ParticipationRestrictionException();
+            }
+
+        }
     }
 
     /**
