@@ -191,7 +191,6 @@ return [
                 //type: repeat, adhoc
                 'winners_num' => 1,
                 'runnerups_num' => 2,
-
                 'associate_participation_column' => [
                     'column' => 'choice',
                     'values' => [
@@ -203,15 +202,11 @@ return [
                 'time_start' => '00:00:00',
                 'time_end' => '23:59:00',
                 'max_winners' => 5,
-
-                //presents
+                'max_daily_wins' => 5,
                 'limit_presents_by' => 'totals', //totals, daily
-
                 'mailable' => 'MailClass',
-
                 'notification' => 'NotificationClass',
                 'testnotificationsrecepient' => 'youremailaddress',
-
                 'auto_approved' => true
 
             ],
