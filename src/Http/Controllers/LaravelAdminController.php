@@ -84,7 +84,7 @@ class LaravelAdminController extends Controller {
         header('Content-Disposition: attachment; filename="'.$promo.'.participations_'.time().'.csv"');
         $data = Participation::orderBy('created_at', 'DESC')->get();
         $out = fopen('php://output', 'w');
-        //fputcsv($out, array_keys($data[1]));
+//        //fputcsv($out, array_keys($data[1]));
 
         $labels = [ 'ID' ];
         foreach ( $this->promo->participationFields() as $field => $info ) {
@@ -96,7 +96,11 @@ class LaravelAdminController extends Controller {
             $line = array();
             $line['id'] = $participation->id;
             foreach ( $this->promo->participationFields() as $field => $info ) {
-                $line[$field] = $participation[$field];
+                if( !empty($info['relation']) ) {
+                    $line[$field] = $participation[$info['relation'][0]][$info['relation'][1]];
+                } else {
+                    $line[$field] = $participation[$field];
+                }
             }
             $line['created_at'] = $participation->created_at;
             fputcsv($out, $line);
