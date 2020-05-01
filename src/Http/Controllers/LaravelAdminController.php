@@ -82,10 +82,18 @@ class LaravelAdminController extends Controller {
         ini_set ( 'max_execution_time', 120 );
         header('Content-type: text/csv');
         header('Content-Disposition: attachment; filename="'.$promo.'.participations_'.time().'.csv"');
-        $data = Participation::orderBy('created_at', 'DESC')->get();
-        $out = fopen('php://output', 'w');
-//        //fputcsv($out, array_keys($data[1]));
 
+        $q = Participation::orderBy('created_at', 'DESC');
+        foreach ( $this->promo->participationFields() as $field => $info ) {
+            if( !empty($info['relation']) ) {
+                $q->with( $info['relation'][0] );
+            }
+        }
+        $data = $q->get();
+
+        $out = fopen('php://output', 'w');
+
+        //fputcsv($out, array_keys($data[1]));
         $labels = [ 'ID' ];
         foreach ( $this->promo->participationFields() as $field => $info ) {
             $labels[] = $info['title'];
