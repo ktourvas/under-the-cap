@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use InstantWin\Player;
 use InstantWin\TimePeriod;
 use InstantWin\Distribution\EvenOverTimeDistribution;
+use UnderTheCap\Entities\InstantsStatus;
 use UnderTheCap\Entities\Present;
 use UnderTheCap\Entities\Promo;
 
@@ -17,6 +18,7 @@ class InstantWinsManager {
 
     function __invoke($id, $info, $participation)
     {
+        \DB::raw('LOCK TABLES utc_instants_status WRITE');
 
         // Pull the available presents. If wins are not related to specific presents use one generic present item
         // with the total of wins expected
@@ -25,22 +27,24 @@ class InstantWinsManager {
         $status = $this->getStatus($id, $info);
 
         if( $presents->count() == 0 ||
-            $status['wins'] >=  $info['max_daily_wins']
+            $status->wins >=  $info['max_daily_wins']
         ) {
+            \DB::raw('UNLOCK TABLES;');
             return false;
         }
 
-        $status['plays']++;
-        $win = $this->play($status);
+        $status->plays++;
+        $win = $this->play( array_merge($status->toArray(), $info) );
         if($win) {
-            $status['wins']++;
+            $status->wins++;
             $present = $presents->random();
             $present->total_given++;
             $present->remaining > 0 ? $present->remaining-- : null;
             $present->save();
         }
 
-        Storage::disk()->put(date('Ymd', time()).'_instant_'.$this->promo->info()['slug'].'_'.$id.'.txt', serialize($status));
+        $status->save();
+        \DB::raw('UNLOCK TABLES;');
 
         if($win && !empty($present)) {
             return $present;
@@ -77,17 +81,13 @@ class InstantWinsManager {
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function getStatus($id, $info) {
-        if( !Storage::disk('local')->exists(date('Ymd', time()).'_instant_'.$this->promo->info()['slug'].'_'.$id.'.txt') ) {
-            return array_merge(
-                $info,
-                [
-                    'wins' => 0,
-                    'plays' => 0,
-                    ]
-            );
-        } else {
-            return unserialize(Storage::disk('local')->get(date('Ymd', time()).'_instant_'.$this->promo->info()['slug'].'_'.$id.'.txt'));
+        $status = InstantsStatus::where('slug', date('Ymd', time()).'_instant_'.$this->promo->info()['slug'].'_'.$id )->first();
+        if( empty($status) ) {
+            $status = new InstantsStatus();
+            $status->slug = date('Ymd', time()).'_instant_'.$this->promo->info()['slug'].'_'.$id;
+            $status->wins = $status->plays = 0;
         }
+        return $status;
     }
 
     protected function getPresents($draw_id, $info, $participation) {
