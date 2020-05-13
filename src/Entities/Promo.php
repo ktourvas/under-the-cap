@@ -246,6 +246,20 @@ class Promo extends Model {
 
     }
 
+    public function instantsStatuses() {
+        $result = [];
+        foreach ( $this->instantDraws() as $key => $instantDraw) {
+            $result[] = array_merge(
+                $instantDraw,
+                [ 'status'=> InstantsStatus::where('slug', date('Ymd', time()).'_instant_'.$this->info()['slug'].'_'.$key )->firstOrNew([
+                    'wins' => 0,
+                    'plays' => 0,
+                ]) ]
+            );
+        }
+        return $result;
+    }
+
     /**
      *
      * Get information of a draw, by id.

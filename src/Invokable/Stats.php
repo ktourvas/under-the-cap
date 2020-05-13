@@ -45,18 +45,27 @@ class Stats {
 
             if($promo->status() == 'r' || \App::make('UnderTheCap\Entities\Promos')->promos()->count() == 1) {
 
+                foreach ( $promo->instantsStatuses() as $instantsStatus) {
+                    $result[] = [
+                        'type' => 'number-tile',
+                        'title' => $instantsStatus['title'],
+                        'number' => $instantsStatus['status']->plays.'::'.$instantsStatus['status']->wins,
+                        'url' => 'utc/draws/'.$promo->slug()
+                    ];
+                }
+
                 $result[] = [
                     'type' => 'number-tile',
                     'title' => $promo->info()['name'].' - Participations total',
                     'number' => Participation::count(),
-                    'url' => config('laravel-admin.main_url').'/utc/participations/'.$promo->slug()
+                    'url' => 'utc/participations/'.$promo->slug()
                 ];
 
                 $result[] = [
                     'type' => 'number-tile',
                     'title' => $promo->info()['name'].' - Participations today',
                     'number' => Participation::whereDate('created_at', date('Y-m-d', time()))->count(),
-                    'url' => config('laravel-admin.main_url').'/utc/participations/'.$promo->slug()
+                    'url' => 'utc/participations/'.$promo->slug()
                 ];
 
             }
