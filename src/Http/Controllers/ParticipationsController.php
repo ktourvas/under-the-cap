@@ -49,12 +49,12 @@ class ParticipationsController extends Controller {
          * In the case that participation restrictions have been imposed, check if the submitted can information
          * can create a new participation.
          */
-        $this->validateRestrictions($request, $this->promo['info']);
+        $this->validateRestrictions($request, $this->promo->info());
 
         // If the submission type includes code redemption, validate the code of the submission
         $code = null;
         if( $submissionType == 'redemption' && !empty($request->code) ) {
-            $code = $this->getRedemptionCode($request->code, $request, $this->promo['info']);
+            $code = $this->getRedemptionCode($request->code, $request, $this->promo->info());
             if(empty($code)) {
                 throw new RedemptionCodeException();
             }
