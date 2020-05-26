@@ -79,6 +79,30 @@ class LaravelAdminController extends Controller {
     }
 
     public function download(Request $request, $promo) {
+        $labels = false;
+        $q = Participation::orderBy('created_at', 'DESC');
+        foreach ( $this->promo->participationFields() as $field => $info ) {
+            if( !empty($info['relation']) ) {
+                $q->with( $info['relation'][0] );
+            }
+        }
+        $out = fopen('php://output', 'w');
+        $q->chunk(200, function($participations) use ($out, $labels) {
+            if( !$labels ) {
+                fputcsv($out,
+                    array_keys( $participations[0]->attributesToArray() )
+                );
+                $labels = true;
+            }
+            foreach($participations as $participation) {
+                $line = $participation->attributesToArray();
+                fputcsv($out, $line);
+            }
+        });
+        fclose($out);
+    }
+
+    public function downloadDeprecated(Request $request, $promo) {
         ini_set ( 'max_execution_time', 120 );
         header('Content-type: text/csv');
         header('Content-Disposition: attachment; filename="'.$promo.'.participations_'.time().'.csv"');

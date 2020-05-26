@@ -19,6 +19,10 @@ class Participation extends Model {
             array_keys($this->promo->info()['participation_fields']),
             [ 'code_id' ]
         );
+        $this->visible  = array_merge(
+            array_keys($this->promo->info()['participation_fields']),
+            [ 'code' ]
+        );
         $this->attributted_fields = collect($this->promo->info()['participation_fields'])
             ->filter(function ($field) {
                 return !empty($field['is_id']);
@@ -31,6 +35,10 @@ class Participation extends Model {
      */
     public function redemptionCode() {
         return $this->belongsTo('UnderTheCap\Entities\RedemptionCode', 'code_id');
+    }
+
+    public function getcodeAttribute() {
+        return !empty($this->redemptionCode) ? $this->redemptionCode->code : '';
     }
 
     /**
