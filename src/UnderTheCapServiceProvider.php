@@ -44,9 +44,9 @@ class UnderTheCapServiceProvider extends ServiceProvider
             __DIR__.'/../config/under-the-cap.php' => config_path('under-the-cap.php'),
         ]);
 
-        $this->publishes([
-            __DIR__.'/../config/under-the-cap.php' => config_path('under-the-cap.php'),
-        ]);
+//        $this->publishes([
+//            __DIR__.'/../config/under-the-cap.php' => config_path('under-the-cap.php'),
+//        ]);
 
         $this->registerPolicies();
 

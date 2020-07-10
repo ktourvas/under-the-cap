@@ -30,6 +30,10 @@ class Participation extends Model {
         parent::__construct($attributes);
     }
 
+    public function user() {
+        return $this->belongsTo('App\User');
+    }
+
     /**
      * The RedemptionCode associated with the Participation
      */
