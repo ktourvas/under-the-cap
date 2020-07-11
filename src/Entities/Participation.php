@@ -15,14 +15,12 @@ class Participation extends Model {
     {
         $this->promo = \App::make('UnderTheCap\Entities\Promos')->current();
         $this->table = $this->promo->info()['participation_table'];
+
         $this->fillable = array_merge(
             array_keys($this->promo->info()['participation_fields']),
             [ 'code_id' ]
         );
-        $this->visible  = array_merge(
-            array_keys($this->promo->info()['participation_fields']),
-            [ 'code' ]
-        );
+
         $this->attributted_fields = collect($this->promo->info()['participation_fields'])
             ->filter(function ($field) {
                 return !empty($field['is_id']);
