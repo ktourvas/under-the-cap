@@ -66,6 +66,10 @@
                     <abbr title="Position">ID (Local)</abbr>
                 </th>
 
+                <th>
+                    User
+                </th>
+
 {{--                @foreach(config('under-the-cap.current.participation_fields') as $field)--}}
                 @foreach( $promo->participationFields() as $key => $field )
                     <th>
@@ -83,6 +87,10 @@
 
                     <th>{{ $participation->id }}</th>
 
+                    <th>
+                        {!! !empty($participation->user) ? $participation->user->id.' :: '.$participation->user->name : 'n/a' !!}
+                    </th>
+
 {{--                    @foreach( config('under-the-cap.current.participation_fields') as $field => $info )--}}
 
                     @foreach( $promo->participationFields() as $field => $info )
@@ -98,6 +106,7 @@
                     @endforeach
 
                     <td>{{ $participation->created_at }}</td>
+
                     <td>
                         <f-delete inline-template del-item="part{{ $participation->id }}" action="/api/utc/{{ $promo->slug() }}/participations/{{ $participation->id }}" message="Πρόκειται να σβήσετε μία συμμετοχή. Σίγουρα;">
                             <form method="post" class="f-delete confirm" @submit.prevent="onSubmit">
@@ -111,6 +120,7 @@
                             </form>
                         </f-delete>
                     </td>
+
                 </tr>
             @endforeach
 

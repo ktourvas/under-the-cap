@@ -31,18 +31,20 @@ class LaravelAdminController extends Controller {
     }
 
     public function participations(Request $request, $promo) {
-        $participations = Participation::orderBy('created_at', 'desc')->where(function($q) use ($request) {
-            /**
-             * if a search query is part of the request, get searchable fields and add relevant query clauses
-             * TODO: make selection fields labels searchable
-             */
-            if(!empty($request->q)) {
-                foreach (array_keys($this->promo->ParticipationSearchables()->toArray()) as $field) {
-                    $q->orWhere($field, 'LIKE', '%'.$request->q.'%');
+        $participations = Participation::orderBy('created_at', 'desc')
+            ->where(function($q) use ($request) {
+                if(!empty($request->q)) {
+                    foreach ($this->promo->ParticipationSearchables()->toArray() as $key => $field) {
+                        if( !empty($field['relation']) ) {
+                            $q->orWhereHas($field['relation'][0], function($q) use ($field, $request) {
+                                $q->where($field['relation'][1], $request->q);
+                            });
+                        } else {
+                            $q->orWhere($key, 'LIKE', '%'.$request->q.'%');
+                        }
+                    }
                 }
-            }
-
-        })->paginate('50');
+            })->paginate('50');
 
         return view('utc::admin.participations', [
             'promo' => $this->promo,
