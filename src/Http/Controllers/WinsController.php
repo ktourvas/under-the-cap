@@ -171,24 +171,35 @@ class WinsController extends Controller {
 
         $wins = $this->pullWins($info);
 
-        $existing = $wins->filter(function ($participation, $key) use ($runnerups) {
+        $existing = $wins->filter(function ($participation, $key) use ($runnerups, $info) {
 
             if($runnerups) {
-                return $participation->win()->first()->runnerup == 1;
+                return $participation->win()->first()->runnerup == 1
+                    && $participation->win()->first()->type_id == $info['id'];
             }
-            return $participation->win()->first()->runnerup == 0;
+            return $participation->win()->first()->runnerup == 0
+                && $participation->win()->first()->type_id == $info['id'];
 
         });
 
         if( ($number - $existing->count()) > 0) {
 
             $new = Participation::whereDoesntHave('win', function($q) use ($info)  {
-                $q->where('type_id', $info['id']);
+
+                if( empty($info['restrict_by_total_participations'])
+                    || !$info['restrict_by_total_participations']) {
+
+                    $q->where('type_id', $info['id']);
+
+                }
+
             });
 
             $new = $this->drawSqlAddExcludes($new, $info, $wins);
 
             $new = $this->drawSqlAddExtras($new, $info);
+
+            $new = $this->drawSqlAddFilters($new, $info);
 
             $new->inRandomOrder()->limit( ($number - $existing->count()) );
 
@@ -203,6 +214,22 @@ class WinsController extends Controller {
             });
 
         }
+    }
+
+    private function drawSqlAddFilters($q, $info) {
+        if( !empty( $info['filters'] ) ) {
+            foreach ( $info['filters'] as $key => $filter ) {
+                switch ( $filter[0] ) {
+                    case 'plain':
+                        $q->where($filter[1], $filter[2], $filter[3]);
+                        break;
+                    case 'date':
+                        $q->whereDate($filter[1], $filter[2], $filter[3]);
+                        break;
+                }
+            }
+        }
+        return $q;
     }
 
     private function drawSqlAddExtras($q, $info) {
@@ -255,13 +282,26 @@ class WinsController extends Controller {
      * @return mixed
      */
     private function pullWins($info) {
+
         $wins = Participation::
         whereHas('win', function($q) use ($info) {
-            $q->where('type_id', $info['id']);
+            if( empty($info['restrict_by_total_participations'])
+                || !$info['restrict_by_total_participations']) {
+                $q->where('type_id', $info['id']);
+            }
         })
-            ->with(['win' => function ($query) use ($info) {
-                $query->where('type_id', $info['id']);
-            }]);
+//            ->with(['win' => function ($query) use ($info) {
+//                if(
+//                    empty($info['restrict_by_total_participations'])
+//                    || !$info['restrict_by_total_participations']
+//                ) {
+//                    $query->where('type_id', $info['id']);
+//                }
+//            }])
+            ->with('win')
+        ;
+
+
         if( !empty($info['extra']) ) {
             foreach ($info['extra'] as $column => $value ) {
                 $wins->where($column, $value);
@@ -289,6 +329,7 @@ class WinsController extends Controller {
         }
 
         $labels[] = 'created at';
+        $labels[] = 'Κλήρωση';
         $labels[] = 'Τύπος Νίκης';
         $labels[] = 'Ημερομηνία Νίκης';
         $labels[] = 'Δώρο';
@@ -307,6 +348,7 @@ class WinsController extends Controller {
             }
             $line['created_at'] = $win->participation->created_at;
 
+            $line['WinDraw'] = $win->draw_name;
             $line['WinType'] = $win->type_name;
             $line['WinAssociatedDate'] = $win->associated_date;
 
